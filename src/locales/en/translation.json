@@ -19,7 +19,11 @@
   "gamePaused": "Take 5, Typoslinger. Get back as soon as you can!",
   "resultsCopied": "Results copied to clipboard! 🎯",
   "shareTextGame": "Typoslinger #{{gameNumber}}",
-  "shareTextStats": "⏱️ {{time}}s • 🎯 {{hits}} Hits • 💥 {{misses}} Miss{{plural}} • 💡 {{hints}} Hint{{hintsPlural}} Used",
+  "shareTextStats": "⏱️ {{time}}s • 🎯 {{hits}} Hit{{hitsPlural}} • 💥 {{misses}} Miss{{missPlural}} • 💡 {{hints}} Hint{{hintsPlural}} Used",
   "shareTextRound": "#{{round}}: {{result}}{{hint}}",
-  "shareTextFooter": "Give it your best shot: https://typoslinger.netlify.app/"
+  "shareTextFooter": "Give it your best shot: https://typoslinger.netlify.app/",
+  "useHint": "Would you like to use a hint?",
+  "yes": "Yes",
+  "no": "No",
+  "hintAlreadyActive": "Hint is already active!"
 } 

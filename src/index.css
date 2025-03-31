@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Rye';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/rye/v13/r05XGLJT86YzH57tbOw.woff2') format('woff2');
+}
+
 * {
   margin: 0;
   padding: 0;

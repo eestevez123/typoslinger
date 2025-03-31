@@ -5,6 +5,13 @@
   text-align: center;
 }
 
+.rye-regular {
+  font-family: "Rye", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
 .logo {
   height: 6em;
   padding: 1.5em;

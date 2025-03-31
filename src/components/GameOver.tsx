@@ -1,75 +1,81 @@
 import React, { useState } from 'react';
-import { Box, Typography, IconButton, Button, Snackbar } from '@mui/material';
-import { motion } from 'framer-motion';
+import { Box, Button, Typography, Snackbar } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
-// Import assets
-import audioOnIcon from '../assets/images/audio_on.png';
-import audioOffIcon from '../assets/images/audio_off.png';
-import sixShooterBarrel from '../assets/images/six_shooter_barrel.png';
-import successShell from '../assets/images/success_shell.png';
-import missShell from '../assets/images/miss_shell.png';
-
 interface GameOverProps {
+  score: number;
   hits: number;
   misses: number;
   time: number;
   hintsUsed: number;
-  roundResults: Array<{ hit: boolean, usedHint: boolean }>;
+  roundResults: Array<{ hit: boolean; usedHint: boolean }>;
+  onPlayAgain: () => void;
   isAudioOn: boolean;
   onAudioToggle: () => void;
 }
 
 const GameOver: React.FC<GameOverProps> = ({
+  score,
   hits,
   misses,
   time,
   hintsUsed,
   roundResults,
+  onPlayAgain,
   isAudioOn,
   onAudioToggle
 }) => {
-  const { t } = useTranslation();
-  const [showToast, setShowToast] = useState(false);
+  const { t, i18n } = useTranslation();
+  const [copySuccess, setCopySuccess] = useState(false);
+  const [copyError, setCopyError] = useState(false);
 
   const generateShareText = () => {
-    const gameNumber = 1; // This should be dynamic based on the day
+    const gameNumber = 1;
+    const timeTaken = Math.round(time);
+    const isSpanish = i18n.language.startsWith('es');
     
-    // Generate the game header
-    const header = t('shareTextGame', { gameNumber });
-
-    // Generate the stats line with proper pluralization
-    const stats = t('shareTextStats', {
-      time,
+    // Generate game header
+    const gameHeader = t('shareTextGame', { gameNumber });
+    
+    // Generate stats line with proper pluralization based on language
+    const statsLine = t('shareTextStats', {
       hits,
       misses,
-      plural: misses !== 1 ? 'es' : '',
+      time: timeTaken,
       hints: hintsUsed,
+      hitsPlural: hits !== 1 ? 's' : '',
+      missPlural: misses != 1 ? (isSpanish ? 's' : 'es') : '',
       hintsPlural: hintsUsed !== 1 ? 's' : ''
     });
-
-    // Generate each round result
-    const rounds = roundResults.map((result, index) => 
+    
+    // Generate round results
+    const roundsText = roundResults.map((result, index) => 
       t('shareTextRound', {
         round: index + 1,
-        result: result.hit ? '🎯' : '💥',
+        result: result.hit ? '✅' : '❌',
         hint: result.usedHint ? ' (💡)' : ''
       })
     ).join('\n');
-
-    // Add the footer
-    const footer = t('shareTextFooter');
-
-    // Combine all parts
-    const shareText = `${header}\n${stats}\n${rounds}\n\n${footer}`;
     
-    navigator.clipboard.writeText(shareText)
-      .then(() => setShowToast(true))
-      .catch(err => console.error('Failed to copy text:', err));
+    // Generate footer
+    const footer = t('shareTextFooter');
+    
+    // Combine all parts
+    const shareText = `${gameHeader}\n${statsLine}\n${roundsText}\n${footer}`;
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(shareText).then(() => {
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    }).catch(() => {
+      setCopyError(true);
+      setTimeout(() => setCopyError(false), 2000);
+    });
   };
 
   const handleCloseToast = () => {
-    setShowToast(false);
+    setCopySuccess(false);
+    setCopyError(false);
   };
 
   return (
@@ -89,7 +95,7 @@ const GameOver: React.FC<GameOverProps> = ({
       <Typography
         variant="h3"
         sx={{
-          fontFamily: "'Rye', serif",
+          fontFamily: 'Rye',
           color: '#2c3e50',
           textAlign: 'center',
           mb: 4
@@ -97,30 +103,6 @@ const GameOver: React.FC<GameOverProps> = ({
       >
         TypoSlinger
       </Typography>
-
-      {/* Audio Toggle */}
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '1rem',
-          right: '1rem'
-        }}
-      >
-        <IconButton
-          onClick={onAudioToggle}
-          sx={{
-            width: '50px',
-            height: '50px',
-            padding: 1
-          }}
-        >
-          <img
-            src={isAudioOn ? audioOnIcon : audioOffIcon}
-            alt={isAudioOn ? "Audio On" : "Audio Off"}
-            style={{ width: '100%', height: '100%' }}
-          />
-        </IconButton>
-      </Box>
 
       {/* Score Display */}
       <Box
@@ -134,11 +116,20 @@ const GameOver: React.FC<GameOverProps> = ({
         <Typography
           variant="h4"
           sx={{
-            fontFamily: "'Rye', serif",
+            fontFamily: 'Rye',
             color: '#2c3e50'
           }}
         >
           {hits}/6
+        </Typography>
+        <Typography
+          variant="h4"
+          sx={{
+            fontFamily: 'Rye',
+            color: '#2c3e50'
+          }}
+        >
+          💡 {hintsUsed}
         </Typography>
         <Typography
           variant="h4"
@@ -151,8 +142,6 @@ const GameOver: React.FC<GameOverProps> = ({
         </Typography>
       </Box>
 
-      {/* Revolver Barrel */}
-
       {/* Share Button */}
       <Button
         variant="contained"
@@ -163,6 +152,7 @@ const GameOver: React.FC<GameOverProps> = ({
           fontSize: '1.2rem',
           padding: '0.5rem 2rem',
           mb: 4,
+          fontFamily: 'Rye',
           '&:hover': {
             bgcolor: '#d35400'
           }
@@ -173,17 +163,17 @@ const GameOver: React.FC<GameOverProps> = ({
 
       {/* Toast Message */}
       <Snackbar
-        open={showToast}
+        open={copySuccess || copyError}
         autoHideDuration={3000}
         onClose={handleCloseToast}
-        message={t('resultsCopied')}
+        message={copySuccess ? t('resultsCopied') : copyError ? t('copyError') : ''}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         sx={{
           '& .MuiSnackbarContent-root': {
             bgcolor: '#2c3e50',
             color: 'white',
             fontSize: '1.1rem',
-            fontFamily: "'Rye', serif"
+            fontFamily: 'Rye'
           }
         }}
       />
@@ -194,7 +184,7 @@ const GameOver: React.FC<GameOverProps> = ({
         sx={{
           color: '#2c3e50',
           textAlign: 'center',
-          fontFamily: "'Rye', serif"
+          fontFamily: 'Rye'
         }}
       >
         {t('comeBackMessage')}

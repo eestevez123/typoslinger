@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, IconButton, Typography, Modal } from '@mui/material';
-import { motion } from 'framer-motion';
+import { Box, IconButton, Typography, Modal, Snackbar } from '@mui/material';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 // Import assets
@@ -20,7 +20,7 @@ import HowToPlay from './HowToPlay';
 import { sentences } from '../config/sentences';
 
 interface GameProps {
-  onEndGame: (score: number, hits: number, misses: number, time: number) => void;
+  onEndGame: (score: number, hits: number, misses: number, hintsUsed: number, time: number) => void;
   onClose: () => void;
   isAudioOn: boolean;
   onAudioToggle: () => void;
@@ -40,10 +40,19 @@ const Game: React.FC<GameProps> = ({
   const [isGameOver, setIsGameOver] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [time, setTime] = useState(0);
+  const [score, setScore] = useState(0);
   const [showPauseModal, setShowPauseModal] = useState(false);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
+  const [showHintModal, setShowHintModal] = useState(false);
+  const [showHintActiveToast, setShowHintActiveToast] = useState(false);
   const [hintsUsed, setHintsUsed] = useState(0);
+  const [isHintActive, setIsHintActive] = useState(false);
   const [roundResults, setRoundResults] = useState<Array<{ hit: boolean, usedHint: boolean }>>([]);
+  const [clickableIndices, setClickableIndices] = useState<number[] | null>(null);
+  const [animatingWordIndex, setAnimatingWordIndex] = useState<number | null>(null);
+  const [showSquiggly, setShowSquiggly] = useState(false);
+  const [isCorrectWord, setIsCorrectWord] = useState(false);
+  const [isSignSpinning, setIsSignSpinning] = useState(false);
 
   // Get current language's sentences
   const currentSentences = sentences[i18n.language.split('-')[0]] || sentences.en;
@@ -53,7 +62,7 @@ const Game: React.FC<GameProps> = ({
   }, []);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: number;
     if (!isPaused) {
       interval = setInterval(() => {
         setTime(prevTime => prevTime + 1);
@@ -68,7 +77,37 @@ const Game: React.FC<GameProps> = ({
     }
   }, [currentRound, isAudioOn]);
 
-  const handleWordClick = (word: string) => {
+  const handleHintConfirm = () => {
+    const words = currentSentences[currentRound].text.split(' ');
+    const misspelledIndex = words.findIndex(w => w.replace(/\./g, '') === currentSentences[currentRound].misspelledWord);
+    const newClickableIndices = getRandomIndices(words.length, Math.min(3, words.length), misspelledIndex);
+    
+    setHintsUsed(hintsUsed + 1);
+    setIsHintActive(true);
+    setClickableIndices(newClickableIndices);
+    setShowHintModal(false);
+  };
+
+  const getRandomIndices = (total: number, keep: number, misspelledIndex: number): number[] => {
+    const indices = new Set<number>([misspelledIndex]);
+    while (indices.size < keep) {
+      const randomIndex = Math.floor(Math.random() * total);
+      if (randomIndex !== misspelledIndex) {
+        indices.add(randomIndex);
+      }
+    }
+    return Array.from(indices);
+  };
+
+  const handleHintClick = () => {
+    if (isHintActive) {
+      setShowHintActiveToast(true);
+    } else {
+      setShowHintModal(true);
+    }
+  };
+
+  const handleWordClick = (word: string, index: number) => {
     // Play gunshot sound if audio is enabled
     if (isAudioOn) {
       playGunShot();
@@ -77,32 +116,57 @@ const Game: React.FC<GameProps> = ({
     // Remove period from the clicked word before comparison
     const cleanWord = word.replace(/\./g, '');
     const isCorrect = cleanWord === currentSentences[currentRound].misspelledWord;
-                     
-    if (isCorrect) {
-      setHits(prev => prev + 1);
-      console.log('🎯 Hit! You found the misspelled word:', cleanWord, '(correct spelling:', currentSentences[currentRound].correctedWord + ')');
-    } else {
-      setMisses(prev => prev + 1);
-      console.log('💥 Miss! The misspelled word was:', currentSentences[currentRound].misspelledWord);
-    }
+    
+    // Find the index of the misspelled word
+    const misspelledIndex = currentSentences[currentRound].text.split(' ').findIndex(w => 
+      w.replace(/\./g, '') === currentSentences[currentRound].misspelledWord
+    );
+    
+    setAnimatingWordIndex(misspelledIndex);
+    setIsSignSpinning(true);
 
-    // Update round results first
-    const newRoundResults = [...roundResults, { hit: isCorrect, usedHint: false }];
-    setRoundResults(newRoundResults);
+    // Start animation sequence
+    setTimeout(() => {
+      setIsSignSpinning(false);
+      setShowSquiggly(true);
+    }, 300); // Sign spins for 300ms
 
-    if (currentRound < currentSentences.length - 1) {
-      setCurrentRound(prev => prev + 1);
-    } else {
-      // Calculate final results
-      const finalHits = isCorrect ? hits + 1 : hits;
-      const finalMisses = isCorrect ? misses : misses + 1;
-      const timeTaken = (Date.now() - (startTime || Date.now())) / 1000;
-      const score = (finalHits * 100) - (finalMisses * 50) - timeTaken;
-      
-      // Set game over and call onEndGame
-      setIsGameOver(true);
-      onEndGame(score, finalHits, finalMisses, Math.round(timeTaken));
-    }
+    // Hide squiggly after 1 second
+    setTimeout(() => {
+      setShowSquiggly(false);
+    }, 1300); // 300ms spin + 1000ms squiggly display
+
+    setTimeout(() => {
+      if (isCorrect) {
+        setHits(prev => prev + 1);
+      } else {
+        setMisses(prev => prev + 1);
+      }
+
+      // Update round results with hint usage
+      const newRoundResults = [...roundResults, { hit: isCorrect, usedHint: isHintActive }];
+      setRoundResults(newRoundResults);
+
+      // Reset hint state for next round
+      setIsHintActive(false);
+      setClickableIndices(null);
+
+      if (currentRound < currentSentences.length - 1) {
+        setCurrentRound(prev => prev + 1);
+      } else {
+        // Calculate final results
+        const finalHits = isCorrect ? hits + 1 : hits;
+        const finalMisses = isCorrect ? misses : misses + 1;
+        const timeTaken = (Date.now() - (startTime || Date.now())) / 1000;
+        const finalScore = (finalHits * 100) - (finalMisses * 50) - timeTaken;
+        
+        // Set final score and game over
+        setScore(finalScore);
+        setIsGameOver(true);
+        onEndGame(finalScore, finalHits, finalMisses, hintsUsed,  Math.round(timeTaken));
+      }
+      setAnimatingWordIndex(null);
+    }, 2300); // Total animation duration
   };
 
   const togglePause = () => {
@@ -119,11 +183,13 @@ const Game: React.FC<GameProps> = ({
   if (isGameOver) {
     return (
       <GameOver
+        score={score}
         hits={hits}
         misses={misses}
         time={time}
         hintsUsed={hintsUsed}
         roundResults={roundResults}
+        onPlayAgain={() => setIsGameOver(false)}
         isAudioOn={isAudioOn}
         onAudioToggle={onAudioToggle}
       />
@@ -183,7 +249,7 @@ const Game: React.FC<GameProps> = ({
         {/* Right side - Hints and Audio */}
         <Box sx={{ display: 'flex', gap: 2 }}>
           <IconButton
-            onClick={() => setShowHowToPlay(true)}
+            onClick={handleHintClick}
             sx={{
               width: '50px',
               height: '50px',
@@ -192,7 +258,7 @@ const Game: React.FC<GameProps> = ({
           >
             <img
               src={hintsIcon}
-              alt="How to Play"
+              alt="Use Hint"
               style={{ width: '100%', height: '100%' }}
             />
           </IconButton>
@@ -232,8 +298,13 @@ const Game: React.FC<GameProps> = ({
           }}
         >
           <motion.div
-            animate={{ rotateY: isPaused ? 90 : 0 }}
-            transition={{ duration: 0.3 }}
+            animate={{ 
+              rotateY: isPaused ? 90 : isSignSpinning ? 180 : 0
+            }}
+            transition={{
+              duration: 0.3,
+              ease: "easeInOut"
+            }}
             style={{
               width: '100%',
               height: '100%',
@@ -245,8 +316,7 @@ const Game: React.FC<GameProps> = ({
               justifyContent: 'center',
               alignItems: 'center',
               transformStyle: 'preserve-3d',
-              perspective: '1000px',
-              transform: 'none'
+              perspective: '1000px'
             }}
           >
             <Box
@@ -262,41 +332,119 @@ const Game: React.FC<GameProps> = ({
                 top: { xs: '-10%', md: '-8%' }
               }}
             >
-              {currentSentences[currentRound].text.split(' ').map((word, index) => (
-                <motion.div
-                  key={index}
-                  onClick={() => handleWordClick(word)}
-                  style={{
-                    backgroundImage: `url(${wordBackgroundIcon})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    padding: '0.5rem 1rem',
-                    cursor: 'pointer',
-                    position: 'relative',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: '25px',
-                    transition: 'box-shadow 0.1s ease'
-                  }}
-                  whileHover={{
-                    boxShadow: '0 0 8px 3px #e67e22'
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Typography
-                    sx={{
-                      color: 'white',
-                      fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' },
-                      fontFamily: "'Western', serif",
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-                      zIndex: 1
+              {currentSentences[currentRound].text.split(' ').map((word, index) => {
+                const shouldShowBackground = !isHintActive || (clickableIndices && clickableIndices.includes(index));
+                const isAnimating = index === animatingWordIndex;
+                const cleanWord = word.replace(/\./g, '');
+                const isMisspelledWord = cleanWord === currentSentences[currentRound].misspelledWord;
+                const correctedWord = isMisspelledWord ? currentSentences[currentRound].correctedWord : word;
+
+                return (
+                  <motion.div
+                    key={index}
+                    onClick={() => shouldShowBackground ? handleWordClick(word, index) : null}
+                    style={{
+                      backgroundImage: shouldShowBackground ? `url(${wordBackgroundIcon})` : 'none',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      padding: '0.5rem 1rem',
+                      cursor: shouldShowBackground ? 'pointer' : 'default',
+                      position: 'relative',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      borderRadius: '25px',
+                      transition: 'box-shadow 0.1s ease'
                     }}
+                    whileHover={shouldShowBackground ? {
+                      boxShadow: '0 0 8px 3px #e67e22'
+                    } : {}}
+                    whileTap={shouldShowBackground ? { scale: 0.95 } : {}}
                   >
-                    {word}
-                  </Typography>
-                </motion.div>
-              ))}
+                    <AnimatePresence mode="wait">
+                      {isAnimating ? (
+                        <motion.div
+                          key="animating"
+                          initial={{ opacity: 1 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.5 }}
+                          style={{ position: 'relative' }}
+                        >
+                          <motion.h2
+                            initial={{ opacity: 1 }}
+                            animate={{ opacity: showSquiggly ? 1 : 0 }}
+                            transition={{ duration: 0.3 }}
+                            style={{
+                              fontFamily: '"Just Another Hand", cursive',
+                              color: 'white',
+                              fontSize: 'clamp(1.2rem, 4vw, 2rem)',
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.3), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+                              margin: 0,
+                              position: 'relative'
+                            }}
+                          >
+                            {word}
+                          </motion.h2>
+                          {showSquiggly && isMisspelledWord && (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.3 }}
+                              style={{
+                                position: 'absolute',
+                                bottom: '-5px',
+                                left: 0,
+                                right: 0,
+                                height: '4px',
+                                background: `url("data:image/svg+xml,%3Csvg width='20' height='4' viewBox='0 0 20 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 0 2 Q 2.5 0, 5 2 T 10 2 T 15 2 T 20 2' stroke='%23e74c3c' fill='none' stroke-width='2'/%3E%3C/svg%3E")`,
+                                backgroundRepeat: 'repeat-x',
+                                backgroundSize: '20px 4px'
+                              }}
+                            />
+                          )}
+                          {!showSquiggly && isMisspelledWord && (
+                            <motion.h2
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ duration: 0.3 }}
+                              style={{
+                                fontFamily: '"Just Another Hand", cursive',
+                                color: 'white',
+                                fontSize: 'clamp(1.2rem, 4vw, 2rem)',
+                                textShadow: '2px 2px 4px rgba(0,0,0,0.3), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+                                margin: 0,
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                right: 0
+                              }}
+                            >
+                              {correctedWord}
+                            </motion.h2>
+                          )}
+                        </motion.div>
+                      ) : (
+                        <motion.h2
+                          key="static"
+                          initial={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          style={{
+                            fontFamily: '"Just Another Hand", cursive',
+                            color: 'white',
+                            fontSize: 'clamp(1.2rem, 4vw, 2rem)',
+                            textShadow: '2px 2px 4px rgba(0,0,0,0.3), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+                            margin: 0
+                          }}
+                        >
+                          {word}
+                        </motion.h2>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                );
+              })}
             </Box>
           </motion.div>
         </Box>
@@ -363,6 +511,88 @@ const Game: React.FC<GameProps> = ({
           </IconButton>
         </Box>
       </Modal>
+
+      {/* Hint Modal */}
+      <Modal
+        open={showHintModal}
+        onClose={() => setShowHintModal(false)}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <Box
+          sx={{
+            bgcolor: 'white',
+            p: 4,
+            borderRadius: 2,
+            maxWidth: '80%',
+            textAlign: 'center'
+          }}
+        >
+          <Typography variant="h5" sx={{ 
+            mb: 3,
+            fontFamily: "'Rye', serif",
+            color: '#2c3e50'
+          }}>
+            {t('useHint')}
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 3, justifyContent: 'center' }}>
+            <IconButton
+              onClick={handleHintConfirm}
+              sx={{
+                bgcolor: '#27ae60',
+                color: 'white',
+                px: 3,
+                py: 1,
+                borderRadius: 2,
+                fontFamily: "'Rye', serif",
+                fontSize: '1.2rem',
+                '&:hover': {
+                  bgcolor: '#219a52'
+                }
+              }}
+            >
+              {t('yes')}
+            </IconButton>
+            <IconButton
+              onClick={() => setShowHintModal(false)}
+              sx={{
+                bgcolor: '#c0392b',
+                color: 'white',
+                px: 3,
+                py: 1,
+                borderRadius: 2,
+                fontFamily: "'Rye', serif",
+                fontSize: '1.2rem',
+                '&:hover': {
+                  bgcolor: '#a93226'
+                }
+              }}
+            >
+              {t('no')}
+            </IconButton>
+          </Box>
+        </Box>
+      </Modal>
+
+      {/* Hint Active Toast */}
+      <Snackbar
+        open={showHintActiveToast}
+        autoHideDuration={2000}
+        onClose={() => setShowHintActiveToast(false)}
+        message={t('hintAlreadyActive')}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        sx={{
+          '& .MuiSnackbarContent-root': {
+            bgcolor: '#c0392b',
+            color: 'white',
+            fontFamily: "'Rye', serif",
+            fontSize: '1rem'
+          }
+        }}
+      />
 
       {/* How to Play Modal */}
       {showHowToPlay && (

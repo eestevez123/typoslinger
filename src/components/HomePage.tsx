@@ -50,7 +50,7 @@ const HomePage: React.FC = () => {
     toggleAudio(newAudioState, !showGame);
   };
 
-  const handleGameEnd = (score: number, hits: number, misses: number, time: number) => {
+  const handleGameEnd = (score: number, hits: number, misses: number, hintsUsed: number, time: number) => {
     // Save game results with current date as key
     const today = new Date().toISOString().split('T')[0];
     localStorage.setItem(today, JSON.stringify({ score, hits, misses, time }));
@@ -59,7 +59,7 @@ const HomePage: React.FC = () => {
       hits,
       misses,
       time,
-      hintsUsed: 0, // You'll need to pass this from Game component
+      hintsUsed,
       roundResults: [], // You'll need to pass this from Game component
     });
   };
@@ -114,7 +114,7 @@ const HomePage: React.FC = () => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography
             sx={{
-              fontFamily: "'Western', serif",
+              fontFamily: '"Just Another Hand", serif',
               color: '#2c3e50',
               fontSize: '1.2rem'
             }}

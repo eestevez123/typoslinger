@@ -19,7 +19,11 @@
   "gamePaused": "Toma 5, Typoslinger. Vuelve cuanto estes listo!",
   "resultsCopied": "¡Resultados copiados al portapapeles! 🎯",
   "shareTextGame": "Typoslinger #{{gameNumber}}",
-  "shareTextStats": "⏱️ {{time}}s • 🎯 {{hits}} Aciertos • 💥 {{misses}} Fallo{{plural}} • 💡 {{hints}} Pista{{hintsPlural}} Usada{{hintsPlural}}",
+  "shareTextStats": "⏱️ {{time}}s • 🎯 {{hits}} Acierto{{hitsPlural}} • 💥 {{misses}} Fallo{{missPlural}} • 💡 {{hints}} Pista{{hintsPlural}} Usada{{hintsPlural}}",
   "shareTextRound": "#{{round}}: {{result}}{{hint}}",
-  "shareTextFooter": "¡Demuestra tu puntería: https://typoslinger.netlify.app/"
+  "shareTextFooter": "¡Demuestra tu puntería: https://typoslinger.netlify.app/",
+  "useHint": "¿Te gustaría usar una pista?",
+  "yes": "Sí",
+  "no": "No",
+  "hintAlreadyActive": "¡La pista ya está activa!"
 } 
