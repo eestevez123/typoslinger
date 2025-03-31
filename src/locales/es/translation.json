@@ -1,0 +1,19 @@
+{
+  "language": "Idioma",
+  "play": "Jugar",
+  "howToPlay": "Cómo Jugar",
+  "pauseMessage": "Juego Pausado",
+  "shareResults": "Compartir Resultados",
+  "comeBackMessage": "¡Vuelve mañana para encontrar nuevos errores!",
+  "howToPlayInstructions": "Encuentra y haz clic en la palabra mal escrita en cada frase. ¡Cuanto más rápido seas, mayor será tu puntuación!",
+  "howToPlayTitle": "Cómo Jugar TypoSlinger",
+  "welcomeText": "¡Bienvenido a TypoSlinger, donde tu vista aguda y tu dedo rápido te ayudarán a atrapar esos errores escurridizos!",
+  "instruction1": "Cada ronda presenta una frase con una palabra mal escrita",
+  "instruction2": "Haz clic en la palabra que crees que está mal escrita",
+  "instruction3": "Escucharás un disparo cuando hagas tu elección",
+  "instruction4": "El tambor muestra tu progreso a través de seis rondas",
+  "instruction5": "Tu puntuación final se basa en:",
+  "scoreHits": "Aciertos: +100 puntos cada uno",
+  "scoreMisses": "Fallos: -50 puntos cada uno",
+  "scoreTime": "Tiempo: -1 punto por segundo"
+} 

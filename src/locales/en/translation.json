@@ -1,0 +1,19 @@
+{
+  "language": "Language",
+  "play": "Play",
+  "howToPlay": "How to Play",
+  "pauseMessage": "Game Paused",
+  "shareResults": "Share Results",
+  "comeBackMessage": "Come back tomorrow for new typos to catch!",
+  "howToPlayInstructions": "Find and click on the misspelled word in each sentence. The faster you are, the higher your score!",
+  "howToPlayTitle": "How to Play TypoSlinger",
+  "welcomeText": "Welcome to TypoSlinger, where your sharp eyes and quick trigger finger will help you catch those sneaky typos!",
+  "instruction1": "Each round presents a sentence with one misspelled word",
+  "instruction2": "Click on the word you think is misspelled",
+  "instruction3": "You'll hear a gunshot when you make your choice",
+  "instruction4": "The barrel shows your progress through six rounds",
+  "instruction5": "Your final score is based on:",
+  "scoreHits": "Hits: +100 points each",
+  "scoreMisses": "Misses: -50 points each",
+  "scoreTime": "Time: -1 point per second"
+} 
