@@ -15,5 +15,11 @@
   "instruction5": "Tu puntuación final se basa en:",
   "scoreHits": "Aciertos: +100 puntos cada uno",
   "scoreMisses": "Fallos: -50 puntos cada uno",
-  "scoreTime": "Tiempo: -1 punto por segundo"
+  "scoreTime": "Tiempo: -1 punto por segundo",
+  "gamePaused": "Toma 5, Typoslinger. Vuelve cuanto estes listo!",
+  "resultsCopied": "¡Resultados copiados al portapapeles! 🎯",
+  "shareTextGame": "Typoslinger #{{gameNumber}}",
+  "shareTextStats": "⏱️ {{time}}s • 🎯 {{hits}} Aciertos • 💥 {{misses}} Fallo{{plural}} • 💡 {{hints}} Pista{{hintsPlural}} Usada{{hintsPlural}}",
+  "shareTextRound": "#{{round}}: {{result}}{{hint}}",
+  "shareTextFooter": "¡Demuestra tu puntería: https://typoslinger.netlify.app/"
 } 

@@ -1,10 +1,15 @@
-import React from 'react';
-import { Box, Typography, IconButton, Button } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Typography, IconButton, Button, Snackbar } from '@mui/material';
+import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 // Import assets
 import audioOnIcon from '../assets/images/audio_on.png';
 import audioOffIcon from '../assets/images/audio_off.png';
+import sixShooterBarrel from '../assets/images/six_shooter_barrel.png';
+import successShell from '../assets/images/success_shell.png';
+import missShell from '../assets/images/miss_shell.png';
+
 interface GameOverProps {
   hits: number;
   misses: number;
@@ -25,14 +30,46 @@ const GameOver: React.FC<GameOverProps> = ({
   onAudioToggle
 }) => {
   const { t } = useTranslation();
+  const [showToast, setShowToast] = useState(false);
 
   const generateShareText = () => {
     const gameNumber = 1; // This should be dynamic based on the day
-    const shareText = `Typoslinger #${gameNumber}\n⏱️ ${time}s • 🎯 ${hits} Hits • 💥 ${misses} Miss${misses !== 1 ? 'es' : ''} • 💡 ${hintsUsed} Hint${hintsUsed !== 1 ? 's' : ''} Used\n${roundResults.map((result, index) => 
-      `#${index + 1}: ${result.hit ? '🎯' : '💥'}${result.usedHint ? ' (💡)' : ''}`
-    ).join('\n')}\n\nGive it your best shot: https://typoslinger.app`;
     
-    navigator.clipboard.writeText(shareText);
+    // Generate the game header
+    const header = t('shareTextGame', { gameNumber });
+
+    // Generate the stats line with proper pluralization
+    const stats = t('shareTextStats', {
+      time,
+      hits,
+      misses,
+      plural: misses !== 1 ? 'es' : '',
+      hints: hintsUsed,
+      hintsPlural: hintsUsed !== 1 ? 's' : ''
+    });
+
+    // Generate each round result
+    const rounds = roundResults.map((result, index) => 
+      t('shareTextRound', {
+        round: index + 1,
+        result: result.hit ? '🎯' : '💥',
+        hint: result.usedHint ? ' (💡)' : ''
+      })
+    ).join('\n');
+
+    // Add the footer
+    const footer = t('shareTextFooter');
+
+    // Combine all parts
+    const shareText = `${header}\n${stats}\n${rounds}\n\n${footer}`;
+    
+    navigator.clipboard.writeText(shareText)
+      .then(() => setShowToast(true))
+      .catch(err => console.error('Failed to copy text:', err));
+  };
+
+  const handleCloseToast = () => {
+    setShowToast(false);
   };
 
   return (
@@ -52,7 +89,7 @@ const GameOver: React.FC<GameOverProps> = ({
       <Typography
         variant="h3"
         sx={{
-          fontFamily: "'Western', serif",
+          fontFamily: "'Rye', serif",
           color: '#2c3e50',
           textAlign: 'center',
           mb: 4
@@ -97,7 +134,7 @@ const GameOver: React.FC<GameOverProps> = ({
         <Typography
           variant="h4"
           sx={{
-            fontFamily: "'Western', serif",
+            fontFamily: "'Rye', serif",
             color: '#2c3e50'
           }}
         >
@@ -134,13 +171,30 @@ const GameOver: React.FC<GameOverProps> = ({
         {t('shareResults')}
       </Button>
 
+      {/* Toast Message */}
+      <Snackbar
+        open={showToast}
+        autoHideDuration={3000}
+        onClose={handleCloseToast}
+        message={t('resultsCopied')}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        sx={{
+          '& .MuiSnackbarContent-root': {
+            bgcolor: '#2c3e50',
+            color: 'white',
+            fontSize: '1.1rem',
+            fontFamily: "'Rye', serif"
+          }
+        }}
+      />
+
       {/* Come Back Message */}
       <Typography
         variant="h6"
         sx={{
           color: '#2c3e50',
           textAlign: 'center',
-          fontFamily: "'Western', serif"
+          fontFamily: "'Rye', serif"
         }}
       >
         {t('comeBackMessage')}

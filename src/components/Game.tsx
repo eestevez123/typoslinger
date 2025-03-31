@@ -17,15 +17,22 @@ import GameOver from './GameOver';
 import SixShooterBarrel from './SixShooterBarrel';
 import { playGunShot, playGunReady } from '../utils/sound';
 import HowToPlay from './HowToPlay';
+import { sentences } from '../config/sentences';
 
 interface GameProps {
   onEndGame: (score: number, hits: number, misses: number, time: number) => void;
+  onClose: () => void;
   isAudioOn: boolean;
   onAudioToggle: () => void;
 }
 
-const Game: React.FC<GameProps> = ({ onEndGame, isAudioOn, onAudioToggle }) => {
-  const { t } = useTranslation();
+const Game: React.FC<GameProps> = ({
+  onEndGame,
+  onClose,
+  isAudioOn,
+  onAudioToggle
+}) => {
+  const { t, i18n } = useTranslation();
   const [currentRound, setCurrentRound] = useState(0);
   const [hits, setHits] = useState(0);
   const [misses, setMisses] = useState(0);
@@ -35,25 +42,18 @@ const Game: React.FC<GameProps> = ({ onEndGame, isAudioOn, onAudioToggle }) => {
   const [time, setTime] = useState(0);
   const [showPauseModal, setShowPauseModal] = useState(false);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
-  // const [hintsUsed, setHintsUsed] = useState(0);
+  const [hintsUsed, setHintsUsed] = useState(0);
   const [roundResults, setRoundResults] = useState<Array<{ hit: boolean, usedHint: boolean }>>([]);
 
-  // Example sentences with typos
-  const sentences = [
-    { text: "The cowboy rode his hores into the sunset.", misspelledWord: "hores", correctedWord: "horse" },
-    { text: "The sheriff was looking for the theif.", misspelledWord: "theif", correctedWord: "thief" },
-    { text: "The tumbleweed rolled accross the desert.", misspelledWord: "accross", correctedWord: "across" },
-    { text: "The saloon was full of cowbois.", misspelledWord: "cowbois", correctedWord: "cowboys" },
-    { text: "The gold was burried in the ground.", misspelledWord: "burried", correctedWord: "buried" },
-    { text: "The bandit was hiding in the shaddows.", misspelledWord: "shaddows", correctedWord: "shadows" }
-  ];
+  // Get current language's sentences
+  const currentSentences = sentences[i18n.language.split('-')[0]] || sentences.en;
 
   useEffect(() => {
     setStartTime(Date.now());
   }, []);
 
   useEffect(() => {
-    let interval: number;
+    let interval: NodeJS.Timeout;
     if (!isPaused) {
       interval = setInterval(() => {
         setTime(prevTime => prevTime + 1);
@@ -76,21 +76,21 @@ const Game: React.FC<GameProps> = ({ onEndGame, isAudioOn, onAudioToggle }) => {
 
     // Remove period from the clicked word before comparison
     const cleanWord = word.replace(/\./g, '');
-    const isCorrect = cleanWord === sentences[currentRound].misspelledWord;
+    const isCorrect = cleanWord === currentSentences[currentRound].misspelledWord;
                      
     if (isCorrect) {
       setHits(prev => prev + 1);
-      console.log('🎯 Hit! You found the misspelled word:', cleanWord, '(correct spelling:', sentences[currentRound].correctedWord + ')');
+      console.log('🎯 Hit! You found the misspelled word:', cleanWord, '(correct spelling:', currentSentences[currentRound].correctedWord + ')');
     } else {
       setMisses(prev => prev + 1);
-      console.log('💥 Miss! The misspelled word was:', sentences[currentRound].misspelledWord);
+      console.log('💥 Miss! The misspelled word was:', currentSentences[currentRound].misspelledWord);
     }
 
     // Update round results first
     const newRoundResults = [...roundResults, { hit: isCorrect, usedHint: false }];
     setRoundResults(newRoundResults);
 
-    if (currentRound < sentences.length - 1) {
+    if (currentRound < currentSentences.length - 1) {
       setCurrentRound(prev => prev + 1);
     } else {
       // Calculate final results
@@ -99,23 +99,11 @@ const Game: React.FC<GameProps> = ({ onEndGame, isAudioOn, onAudioToggle }) => {
       const timeTaken = (Date.now() - (startTime || Date.now())) / 1000;
       const score = (finalHits * 100) - (finalMisses * 50) - timeTaken;
       
-      // Then set game over and call onEndGame
+      // Set game over and call onEndGame
       setIsGameOver(true);
       onEndGame(score, finalHits, finalMisses, Math.round(timeTaken));
     }
   };
-
-  // const handleHint = () => {
-  //   setHintsUsed(prev => prev + 1);
-  //   // Update the current round's result to include hint usage
-  //   setRoundResults(prev => {
-  //     const newResults = [...prev];
-  //     if (newResults[currentRound]) {
-  //       newResults[currentRound].usedHint = true;
-  //     }
-  //     return newResults;
-  //   });
-  // };
 
   const togglePause = () => {
     setIsPaused(!isPaused);
@@ -134,7 +122,7 @@ const Game: React.FC<GameProps> = ({ onEndGame, isAudioOn, onAudioToggle }) => {
         hits={hits}
         misses={misses}
         time={time}
-        hintsUsed={0}
+        hintsUsed={hintsUsed}
         roundResults={roundResults}
         isAudioOn={isAudioOn}
         onAudioToggle={onAudioToggle}
@@ -156,7 +144,7 @@ const Game: React.FC<GameProps> = ({ onEndGame, isAudioOn, onAudioToggle }) => {
       <Typography
         variant="h3"
         sx={{
-          fontFamily: "'Western', serif",
+          fontFamily: "'Rye', serif",
           color: '#2c3e50',
           textAlign: 'center',
           mt: 2,
@@ -231,15 +219,16 @@ const Game: React.FC<GameProps> = ({ onEndGame, isAudioOn, onAudioToggle }) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: 'calc(100vh - 200px)',
-          position: 'relative'
+          height: { xs: 'calc(100vh - 300px)', md: 'calc(100vh - 200px)' },
+          position: 'relative',
+          mt: { xs: 2, md: 0 }
         }}
       >
         <Box
           sx={{
             width: { xs: '90%', md: '50%' },
             maxWidth: '1600px',
-            height: { xs: '60vh', md: '90vh' }
+            height: { xs: '50vh', md: '90vh' }
           }}
         >
           <motion.div
@@ -270,10 +259,10 @@ const Game: React.FC<GameProps> = ({ onEndGame, isAudioOn, onAudioToggle }) => {
                 width: { xs: '70%', md: '50%' },
                 height: '40%',
                 position: 'relative',
-                top: { xs: '-5%', md: '-8%' }
+                top: { xs: '-10%', md: '-8%' }
               }}
             >
-              {sentences[currentRound].text.split(' ').map((word, index) => (
+              {currentSentences[currentRound].text.split(' ').map((word, index) => (
                 <motion.div
                   key={index}
                   onClick={() => handleWordClick(word)}
@@ -351,7 +340,11 @@ const Game: React.FC<GameProps> = ({ onEndGame, isAudioOn, onAudioToggle }) => {
             textAlign: 'center'
           }}
         >
-          <Typography variant="h5" sx={{ mb: 2 }}>
+          <Typography variant="h5" sx={{ 
+            mb: 2,
+            fontFamily: "'Rye', serif",
+            color: '#2c3e50'
+          }}>
             {t('gamePaused')}
           </Typography>
           <IconButton

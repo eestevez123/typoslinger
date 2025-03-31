@@ -162,27 +162,31 @@ const HomePage: React.FC = () => {
           gap: 4
         }}
       >
+        {/* Title */}
         <Typography
-          variant="h3"
+          variant="h1"
           sx={{
-            fontFamily: "'Western', serif",
+            fontFamily: "'Rye', serif",
             color: '#2c3e50',
             textAlign: 'center',
-            mt: 2,
+            fontSize: { xs: '3rem', sm: '4rem', md: '5rem' },
             mb: 4
           }}
         >
           TypoSlinger
         </Typography>
 
+        {/* Play Button */}
         <Button
-          variant="contained"
           onClick={() => setShowGame(true)}
+          variant="contained"
           sx={{
             bgcolor: '#e67e22',
             color: 'white',
-            fontSize: '1.5rem',
-            padding: '0.5rem 3rem',
+            fontSize: { xs: '1.5rem', sm: '2rem' },
+            padding: '0.5rem 2rem',
+            mb: 4,
+            fontFamily: "'Rye', serif",
             '&:hover': {
               bgcolor: '#d35400'
             }
@@ -191,18 +195,15 @@ const HomePage: React.FC = () => {
           {t('play')}
         </Button>
 
+        {/* How to Play Button */}
         <Button
-          variant="outlined"
           onClick={() => setShowHowToPlay(true)}
+          variant="text"
           sx={{
             color: '#2c3e50',
-            borderColor: '#2c3e50',
-            fontSize: '1.2rem',
-            padding: '0.5rem 2rem',
-            '&:hover': {
-              borderColor: '#2c3e50',
-              bgcolor: 'rgba(44, 62, 80, 0.1)'
-            }
+            fontSize: { xs: '1.2rem', sm: '1.5rem' },
+            mb: 2,
+            fontFamily: "'Rye', serif"
           }}
         >
           {t('howToPlay')}

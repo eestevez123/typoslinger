@@ -15,5 +15,11 @@
   "instruction5": "Your final score is based on:",
   "scoreHits": "Hits: +100 points each",
   "scoreMisses": "Misses: -50 points each",
-  "scoreTime": "Time: -1 point per second"
+  "scoreTime": "Time: -1 point per second",
+  "gamePaused": "Take 5, Typoslinger. Get back as soon as you can!",
+  "resultsCopied": "Results copied to clipboard! 🎯",
+  "shareTextGame": "Typoslinger #{{gameNumber}}",
+  "shareTextStats": "⏱️ {{time}}s • 🎯 {{hits}} Hits • 💥 {{misses}} Miss{{plural}} • 💡 {{hints}} Hint{{hintsPlural}} Used",
+  "shareTextRound": "#{{round}}: {{result}}{{hint}}",
+  "shareTextFooter": "Give it your best shot: https://typoslinger.netlify.app/"
 } 
