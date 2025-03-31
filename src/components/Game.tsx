@@ -20,15 +20,13 @@ import HowToPlay from './HowToPlay';
 import { sentences } from '../config/sentences';
 
 interface GameProps {
-  onEndGame: (score: number, hits: number, misses: number, hintsUsed: number, time: number) => void;
-  onClose: () => void;
+  onEndGame: (hits: number, misses: number, hintsUsed: number, time: number) => void;
   isAudioOn: boolean;
   onAudioToggle: () => void;
 }
 
 const Game: React.FC<GameProps> = ({
   onEndGame,
-  onClose,
   isAudioOn,
   onAudioToggle
 }) => {
@@ -40,7 +38,6 @@ const Game: React.FC<GameProps> = ({
   const [isGameOver, setIsGameOver] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [time, setTime] = useState(0);
-  const [score, setScore] = useState(0);
   const [showPauseModal, setShowPauseModal] = useState(false);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showHintModal, setShowHintModal] = useState(false);
@@ -51,7 +48,6 @@ const Game: React.FC<GameProps> = ({
   const [clickableIndices, setClickableIndices] = useState<number[] | null>(null);
   const [animatingWordIndex, setAnimatingWordIndex] = useState<number | null>(null);
   const [showSquiggly, setShowSquiggly] = useState(false);
-  const [isCorrectWord, setIsCorrectWord] = useState(false);
   const [isSignSpinning, setIsSignSpinning] = useState(false);
 
   // Get current language's sentences
@@ -107,7 +103,7 @@ const Game: React.FC<GameProps> = ({
     }
   };
 
-  const handleWordClick = (word: string, index: number) => {
+  const handleWordClick = (word: string) => {
     // Play gunshot sound if audio is enabled
     if (isAudioOn) {
       playGunShot();
@@ -158,12 +154,9 @@ const Game: React.FC<GameProps> = ({
         const finalHits = isCorrect ? hits + 1 : hits;
         const finalMisses = isCorrect ? misses : misses + 1;
         const timeTaken = (Date.now() - (startTime || Date.now())) / 1000;
-        const finalScore = (finalHits * 100) - (finalMisses * 50) - timeTaken;
-        
-        // Set final score and game over
-        setScore(finalScore);
+
         setIsGameOver(true);
-        onEndGame(finalScore, finalHits, finalMisses, hintsUsed,  Math.round(timeTaken));
+        onEndGame(finalHits, finalMisses, hintsUsed,  Math.round(timeTaken));
       }
       setAnimatingWordIndex(null);
     }, 2300); // Total animation duration
@@ -183,15 +176,11 @@ const Game: React.FC<GameProps> = ({
   if (isGameOver) {
     return (
       <GameOver
-        score={score}
         hits={hits}
         misses={misses}
         time={time}
         hintsUsed={hintsUsed}
         roundResults={roundResults}
-        onPlayAgain={() => setIsGameOver(false)}
-        isAudioOn={isAudioOn}
-        onAudioToggle={onAudioToggle}
       />
     );
   }
@@ -342,7 +331,7 @@ const Game: React.FC<GameProps> = ({
                 return (
                   <motion.div
                     key={index}
-                    onClick={() => shouldShowBackground ? handleWordClick(word, index) : null}
+                    onClick={() => shouldShowBackground ? handleWordClick(word) : null}
                     style={{
                       backgroundImage: shouldShowBackground ? `url(${wordBackgroundIcon})` : 'none',
                       backgroundSize: 'cover',

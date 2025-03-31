@@ -3,27 +3,19 @@ import { Box, Button, Typography, Snackbar } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 interface GameOverProps {
-  score: number;
   hits: number;
   misses: number;
   time: number;
   hintsUsed: number;
   roundResults: Array<{ hit: boolean; usedHint: boolean }>;
-  onPlayAgain: () => void;
-  isAudioOn: boolean;
-  onAudioToggle: () => void;
 }
 
 const GameOver: React.FC<GameOverProps> = ({
-  score,
   hits,
   misses,
   time,
   hintsUsed,
-  roundResults,
-  onPlayAgain,
-  isAudioOn,
-  onAudioToggle
+  roundResults
 }) => {
   const { t, i18n } = useTranslation();
   const [copySuccess, setCopySuccess] = useState(false);

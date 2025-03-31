@@ -50,10 +50,10 @@ const HomePage: React.FC = () => {
     toggleAudio(newAudioState, !showGame);
   };
 
-  const handleGameEnd = (score: number, hits: number, misses: number, hintsUsed: number, time: number) => {
+  const handleGameEnd = (hits: number, misses: number, hintsUsed: number, time: number) => {
     // Save game results with current date as key
     const today = new Date().toISOString().split('T')[0];
-    localStorage.setItem(today, JSON.stringify({ score, hits, misses, time }));
+    localStorage.setItem(today, JSON.stringify({hits, misses, time }));
     
     setGameResults({
       hits,
@@ -73,8 +73,6 @@ const HomePage: React.FC = () => {
         time={gameResults.time}
         hintsUsed={gameResults.hintsUsed}
         roundResults={gameResults.roundResults}
-        isAudioOn={isAudioOn}
-        onAudioToggle={handleAudioToggle}
       />
     );
   }
