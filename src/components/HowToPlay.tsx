@@ -37,7 +37,7 @@ const HowToPlay: React.FC<HowToPlayProps> = ({ onClose }) => {
             position: 'relative',
             width: '90vw',
             maxWidth: '800px',
-            maxHeight: '90vh',
+            maxHeight: '90dvh',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',

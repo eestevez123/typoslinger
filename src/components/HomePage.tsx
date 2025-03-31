@@ -91,7 +91,7 @@ const HomePage: React.FC = () => {
   return (
     <Box
       sx={{
-        height: '100vh',
+        height: '100dvh',
         display: 'flex',
         flexDirection: 'column',
         bgcolor: '#FFF8E7',
@@ -216,7 +216,7 @@ const HomePage: React.FC = () => {
           position: 'absolute',
           bottom: 0,
           left: '5%',
-          height: '24vh'
+          height: '24dvh'
         }}
       />
 
@@ -226,11 +226,11 @@ const HomePage: React.FC = () => {
         style={{
           position: 'absolute',
           bottom: 0,
-          height: '15vh'
+          height: '15dvh'
         }}
         initial={{ x: "100vw", opacity: 1 }}
         animate={{
-          x: "-20vh",
+          x: "-20dvh",
           y: [0, -20, 0, -15, 0, -10, 0],
           rotate: -360,
           opacity: [1, 1, 1, 1, 0]

@@ -187,14 +187,14 @@ const Game: React.FC<GameProps> = ({
 
   return (
     <Box
-      sx={{
-        height: { xs: '100dvh', md: '100vh' },
-        width: '100vw',
-        bgcolor: '#FFF8E7',
-        position: 'relative',
-        overflow: 'hidden',
-        minHeight: { xs: '-webkit-fill-available', md: '100vh' }
-      }}
+    sx={{
+      height: '100dvh',
+      width: '100dvw',
+      bgcolor: '#FFF8E7',
+      position: 'relative',
+      overflow: 'hidden',
+      minHeight: '100dvh',
+    }}
     >
       {/* Banner */}
       <Typography
@@ -275,7 +275,7 @@ const Game: React.FC<GameProps> = ({
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: { xs: 'calc(100dvh - 400px)', md: 'calc(100vh - 200px)' },
+          height: 'calc(100dvh - 200px)',
           position: 'relative',
           mt: { xs: 2, md: 0 },
           mb: { xs: 4, md: 0 }
@@ -285,7 +285,7 @@ const Game: React.FC<GameProps> = ({
           sx={{
             width: { xs: '90%', md: '50%' },
             maxWidth: '1600px',
-            height: { xs: '40vh', md: '90vh' }
+            height: { xs: '40dvh', md: '90dvh' }
           }}
         >
           <motion.div

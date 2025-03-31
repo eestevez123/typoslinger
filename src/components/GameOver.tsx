@@ -73,8 +73,8 @@ const GameOver: React.FC<GameOverProps> = ({
   return (
     <Box
       sx={{
-        height: '100vh',
-        width: '100vw',
+        height: '100dvh',
+        width: '100dvw',
         bgcolor: '#FFF8E7',
         position: 'relative',
         display: 'flex',
