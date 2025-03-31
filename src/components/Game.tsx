@@ -274,16 +274,17 @@ const Game: React.FC<GameProps> = ({
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: { xs: 'calc(100vh - 300px)', md: 'calc(100vh - 200px)' },
+          height: { xs: 'calc(100vh - 400px)', md: 'calc(100vh - 200px)' },
           position: 'relative',
-          mt: { xs: 2, md: 0 }
+          mt: { xs: 2, md: 0 },
+          mb: { xs: 4, md: 0 }
         }}
       >
         <Box
           sx={{
             width: { xs: '90%', md: '50%' },
             maxWidth: '1600px',
-            height: { xs: '50vh', md: '90vh' }
+            height: { xs: '40vh', md: '90vh' }
           }}
         >
           <motion.div
@@ -443,7 +444,7 @@ const Game: React.FC<GameProps> = ({
       <Typography
         sx={{
           position: 'absolute',
-          bottom: '1rem',
+          bottom: { xs: '5rem', md: '1rem' },
           right: '1rem',
           fontSize: '2rem',
           fontFamily: 'monospace',
@@ -454,9 +455,20 @@ const Game: React.FC<GameProps> = ({
       </Typography>
 
       {/* Six Shooter Barrel Progress */}
-      <SixShooterBarrel
-        roundResults={roundResults}
-      />
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: { xs: '1rem', md: '1rem' },
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: { xs: '90%', md: 'auto' },
+          maxWidth: '600px'
+        }}
+      >
+        <SixShooterBarrel
+          roundResults={roundResults}
+        />
+      </Box>
 
       {/* Pause Modal */}
       <Modal

@@ -104,14 +104,6 @@ const HowToPlay: React.FC<HowToPlayProps> = ({ onClose }) => {
             <Typography variant="h6" sx={{ mb: 2, fontSize: { xs: '1.1rem', md: '1.2rem' } }}>
               4. {t('instruction4')}
             </Typography>
-            <Typography variant="h6" sx={{ mb: 2, fontSize: { xs: '1.1rem', md: '1.2rem' } }}>
-              5. {t('instruction5')}
-              <ul style={{ marginTop: '0.5rem', marginLeft: '1.5rem' }}>
-                <li>{t('scoreHits')}</li>
-                <li>{t('scoreMisses')}</li>
-                <li>{t('scoreTime')}</li>
-              </ul>
-            </Typography>
           </Box>
         </Box>
       </Box>
