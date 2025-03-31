@@ -275,7 +275,7 @@ const Game: React.FC<GameProps> = ({
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: 'calc(100dvh - 200px)',
+          height: {xs: 'calc(100dvh - 400px)', md: 'calc(100dvh - 250px)'},
           position: 'relative',
           mt: { xs: 2, md: 0 },
           mb: { xs: 4, md: 0 }
@@ -283,9 +283,9 @@ const Game: React.FC<GameProps> = ({
       >
         <Box
           sx={{
-            width: { xs: '90%', md: '50%' },
+            width: { xs: '65%', md: '50%' },
             maxWidth: '1600px',
-            height: { xs: '40dvh', md: '90dvh' }
+            height: { xs: '50dvh', md: '90dvh' }
           }}
         >
           <motion.div
@@ -460,8 +460,7 @@ const Game: React.FC<GameProps> = ({
         sx={{
           position: 'absolute',
           bottom: { xs: '1rem', md: '1rem' },
-          left: '50%',
-          transform: 'translateX(-50%)',
+          left: '1rem',
           width: { xs: '90%', md: 'auto' },
           maxWidth: '600px'
         }}
