@@ -1,16 +1,10 @@
 import React from 'react';
 import { Box, Typography, IconButton, Button } from '@mui/material';
-import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 // Import assets
 import audioOnIcon from '../assets/images/audio_on.png';
 import audioOffIcon from '../assets/images/audio_off.png';
-import sixShooterBarrel from '../assets/images/six_shooter_barrel.png';
-import successShell from '../assets/images/success_shell.png';
-import missShell from '../assets/images/miss_shell.png';
-import SixShooterBarrel from './SixShooterBarrel';
-
 interface GameOverProps {
   hits: number;
   misses: number;

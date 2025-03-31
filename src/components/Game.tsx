@@ -35,7 +35,7 @@ const Game: React.FC<GameProps> = ({ onEndGame, isAudioOn, onAudioToggle }) => {
   const [time, setTime] = useState(0);
   const [showPauseModal, setShowPauseModal] = useState(false);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
-  const [hintsUsed, setHintsUsed] = useState(0);
+  // const [hintsUsed, setHintsUsed] = useState(0);
   const [roundResults, setRoundResults] = useState<Array<{ hit: boolean, usedHint: boolean }>>([]);
 
   // Example sentences with typos
@@ -105,17 +105,17 @@ const Game: React.FC<GameProps> = ({ onEndGame, isAudioOn, onAudioToggle }) => {
     }
   };
 
-  const handleHint = () => {
-    setHintsUsed(prev => prev + 1);
-    // Update the current round's result to include hint usage
-    setRoundResults(prev => {
-      const newResults = [...prev];
-      if (newResults[currentRound]) {
-        newResults[currentRound].usedHint = true;
-      }
-      return newResults;
-    });
-  };
+  // const handleHint = () => {
+  //   setHintsUsed(prev => prev + 1);
+  //   // Update the current round's result to include hint usage
+  //   setRoundResults(prev => {
+  //     const newResults = [...prev];
+  //     if (newResults[currentRound]) {
+  //       newResults[currentRound].usedHint = true;
+  //     }
+  //     return newResults;
+  //   });
+  // };
 
   const togglePause = () => {
     setIsPaused(!isPaused);
@@ -134,7 +134,7 @@ const Game: React.FC<GameProps> = ({ onEndGame, isAudioOn, onAudioToggle }) => {
         hits={hits}
         misses={misses}
         time={time}
-        hintsUsed={hintsUsed}
+        hintsUsed={0}
         roundResults={roundResults}
         isAudioOn={isAudioOn}
         onAudioToggle={onAudioToggle}

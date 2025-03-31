@@ -84,7 +84,6 @@ const HomePage: React.FC = () => {
     return (
       <Game
         onEndGame={handleGameEnd}
-        onClose={() => setShowGame(false)}
         isAudioOn={isAudioOn}
         onAudioToggle={handleAudioToggle}
       />
