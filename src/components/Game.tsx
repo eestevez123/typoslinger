@@ -188,11 +188,12 @@ const Game: React.FC<GameProps> = ({
   return (
     <Box
       sx={{
-        height: '100vh',
+        height: { xs: '100dvh', md: '100vh' },
         width: '100vw',
         bgcolor: '#FFF8E7',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        minHeight: { xs: '-webkit-fill-available', md: '100vh' }
       }}
     >
       {/* Banner */}
@@ -274,7 +275,7 @@ const Game: React.FC<GameProps> = ({
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: { xs: 'calc(100vh - 400px)', md: 'calc(100vh - 200px)' },
+          height: { xs: 'calc(100dvh - 400px)', md: 'calc(100vh - 200px)' },
           position: 'relative',
           mt: { xs: 2, md: 0 },
           mb: { xs: 4, md: 0 }
