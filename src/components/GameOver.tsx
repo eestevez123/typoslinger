@@ -77,38 +77,40 @@ const GameOver: React.FC<GameOverProps> = ({
         TypoSlinger
       </h1>
 
-      {/* Score Display */}
-      <div className="score-display">
-        <h2 className="score-text">
-          {hits}/6
-        </h2>
-        <h2 className="score-text">
-          💡 {hintsUsed}
-        </h2>
-        <h2 className="score-time">
-          {time}s
-        </h2>
-      </div>
-
-      {/* Share Button */}
-      <button
-        className="share-button"
-        onClick={generateShareText}
-      >
-        {t('shareResults')}
-      </button>
-
-      {/* Toast Message */}
-      {(copySuccess || copyError) && (
-        <div className="toast" onClick={handleCloseToast}>
-          {copySuccess ? t('resultsCopied') : copyError ? t('copyError') : ''}
+      <div className="game-over-content-container">
+        {/* Score Display */}
+        <div className="score-display">
+          <h2 className="score-text">
+            🎯 {hits}/6
+          </h2>
+          <h2 className="score-text">
+            💡 {hintsUsed}
+          </h2>
+          <h2 className="score-time">
+            ⏱️ {time}s
+          </h2>
         </div>
-      )}
 
-      {/* Come Back Message */}
-      <h3 className="come-back-message">
-        {t('comeBackMessage')}
-      </h3>
+        {/* Share Button */}
+        <button
+          className="share-button"
+          onClick={generateShareText}
+        >
+          {t('shareResults')}
+        </button>
+
+        {/* Toast Message */}
+        {(copySuccess || copyError) && (
+          <div className="toast" onClick={handleCloseToast}>
+            {copySuccess ? t('resultsCopied') : copyError ? t('copyError') : ''}
+          </div>
+        )}
+
+        {/* Come Back Message */}
+        <h3 className="come-back-message">
+          {t('comeBackMessage')}
+        </h3>
+      </div>
     </div>
   );
 };

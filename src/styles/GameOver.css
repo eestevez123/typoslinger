@@ -30,7 +30,6 @@
 }
 
 .score-time {
-    font-family: monospace;
     color: #2c3e50;
     font-size: 2rem;
     margin: 0;
@@ -108,4 +107,15 @@
     .come-back-message {
         font-size: 1.5rem;
     }
-} 
+}
+
+.game-over-content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80%;
+    width: 100%;
+    padding: 2rem;
+    box-sizing: border-box;
+}
