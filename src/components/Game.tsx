@@ -48,6 +48,7 @@ const Game: React.FC<GameProps> = ({
   const [clickableIndices, setClickableIndices] = useState<number[] | null>(null);
   const [showSquiggly, setShowSquiggly] = useState(false);
   const [isSignSpinning, setIsSignSpinning] = useState(false);
+  const [isWordClicked, setIsWordClicked] = useState(false);
 
   // Get current language's sentences
   const currentSentences = sentences[i18n.language.split('-')[0]] || sentences.en;
@@ -103,6 +104,9 @@ const Game: React.FC<GameProps> = ({
   };
 
   const handleWordClick = (word: string) => {
+    if (isWordClicked) return; // Prevent clicking if a word has already been clicked
+    setIsWordClicked(true); // Set the clicked state
+
     // Play gunshot sound if audio is enabled
     if (isAudioOn) {
       playGunShot();
@@ -112,20 +116,20 @@ const Game: React.FC<GameProps> = ({
     const cleanWord = word.replace(/\./g, '');
     const isCorrect = cleanWord === currentSentences[currentRound].misspelledWord;
     
+    // Start sign flip animation
     setIsSignSpinning(true);
 
-    // Start animation sequence
+    // After sign flip completes (300ms), start word animation sequence
     setTimeout(() => {
-      setIsSignSpinning(false);
-      setShowSquiggly(true);
-    }, 300); // Sign spins for 300ms
+      setIsSignSpinning(false); // Sign is back to original position
+      setShowSquiggly(true); // Start word animation sequence
+    }, 300);
 
-    // Hide squiggly after 1 second
+    // After all animations complete, proceed to next round
     setTimeout(() => {
       setShowSquiggly(false);
-    }, 1300); // 300ms spin + 1000ms squiggly display
-
-    setTimeout(() => {
+      setIsWordClicked(false);
+      
       if (isCorrect) {
         setHits(prev => prev + 1);
       } else {
@@ -149,9 +153,9 @@ const Game: React.FC<GameProps> = ({
         const timeTaken = (Date.now() - (startTime || Date.now())) / 1000;
 
         setIsGameOver(true);
-        onEndGame(finalHits, finalMisses, hintsUsed,  Math.round(timeTaken));
+        onEndGame(finalHits, finalMisses, hintsUsed, Math.round(timeTaken));
       }
-    }, 2300); // Total animation duration
+    }, 2300); // Total animation duration: 300ms sign flip + 2000ms word animation
   };
 
   const togglePause = () => {
@@ -178,86 +182,31 @@ const Game: React.FC<GameProps> = ({
   }
 
   return (
-    <div
-      style={{
-        height: '100dvh',
-        width: '100dvw',
-        backgroundColor: '#FFF8E7',
-        position: 'relative',
-        overflow: 'hidden',
-        minHeight: '100dvh'
-      }}
-    >
+    <div className="gameContainer">
       {/* Banner */}
-      <h3
-      className="gameBanner"
-      >
+      <h3 className="gameBanner">
         TypoSlinger
       </h3>
 
       {/* Top Bar */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '1rem',
-          width: '100%'
-        }}
-      >
+      <div className="game-controls">
         {/* Pause Button */}
-        <button
-          onClick={togglePause}
-          style={{
-            width: '50px',
-            height: '50px',
-            padding: '0.25rem',
-            border: 'none',
-            background: 'none',
-            cursor: 'pointer'
-          }}
-        >
+        <button className="game-button" onClick={togglePause}>
           <img
             src={isPaused ? playIcon : pauseIcon}
             alt={isPaused ? "Resume" : "Pause"}
-            style={{ width: '100%', height: '100%' }}
           />
         </button>
 
         {/* Right side - Hints and Audio */}
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <button
-            onClick={handleHintClick}
-            style={{
-              width: '50px',
-              height: '50px',
-              padding: '0.25rem',
-              border: 'none',
-              background: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            <img
-              src={hintsIcon}
-              alt="Use Hint"
-              style={{ width: '100%', height: '100%' }}
-            />
+        <div className="d-flex" style={{ gap: '1rem' }}>
+          <button className="game-button" onClick={handleHintClick}>
+            <img src={hintsIcon} alt="Use Hint" />
           </button>
-          <button
-            onClick={onAudioToggle}
-            style={{
-              width: '50px',
-              height: '50px',
-              padding: '0.25rem',
-              border: 'none',
-              background: 'none',
-              cursor: 'pointer'
-            }}
-          >
+          <button className="game-button" onClick={onAudioToggle}>
             <img
               src={isAudioOn ? audioOnIcon : audioOffIcon}
               alt={isAudioOn ? "Audio On" : "Audio Off"}
-              style={{ width: '100%', height: '100%' }}
             />
           </button>
         </div>
@@ -265,24 +214,14 @@ const Game: React.FC<GameProps> = ({
 
       {/* Main Game Area */}
       <div
+        className="d-flex justify-content-center align-items-center"
         style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 'calc(100dvh - 200px)',
-          position: 'relative',
-          marginTop: '1rem',
-          marginBottom: '2rem'
+          position: 'relative'
         }}
       >
-        <div
-          style={{
-            width: '90%',
-            maxWidth: '1600px',
-            height: '90dvh'
-          }}
-        >
+        <div className="signGameContainer">
           <motion.div
+          className="signGameContainerMotionDiv"
             animate={{ 
               rotateY: isPaused ? 90 : isSignSpinning ? 180 : 0
             }}
@@ -305,54 +244,43 @@ const Game: React.FC<GameProps> = ({
             }}
           >
             <div
-              style={{
-                display: 'flex',
-                gap: '1rem',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: '50%',
-                height: '40%',
-                position: 'relative',
-                top: '-8%'
-              }}
+              className="wordsContainer"
             >
               {currentSentences[currentRound].text.split(' ').map((word, index) => {
-                const shouldShowBackground = !isHintActive || (clickableIndices && clickableIndices.includes(index));
+                const shouldShowBackground = (!isHintActive || (clickableIndices && clickableIndices.includes(index))) && !isWordClicked;
                 const cleanWord = word.replace(/\./g, '');
                 const isMisspelledWord = cleanWord === currentSentences[currentRound].misspelledWord;
 
                 return (
                   <div
                     key={index}
-                    style={{
-                      position: 'relative',
-                      display: 'inline-block',
-                      cursor: shouldShowBackground ? 'pointer' : 'default',
-                      padding: '0.5rem',
-                      borderRadius: '4px',
-                      backgroundColor: shouldShowBackground ? 'rgba(255, 255, 255, 0.8)' : 'transparent',
-                      transition: 'background-color 0.2s'
-                    }}
+                    className={`word-container ${!shouldShowBackground ? 'inactive' : ''}`}
                     onClick={() => shouldShowBackground && handleWordClick(word)}
                   >
-                    <span
-                      style={{
-                        fontSize: '1.5rem',
-                        color: '#2c3e50',
-                        position: 'relative',
-                        zIndex: 1
+                    <motion.span 
+                      className="word-text"
+                      initial={{ opacity: 1, y: 0 }}
+                      animate={{ 
+                        opacity: showSquiggly && isMisspelledWord ? [1, 1, 0, 0, 1] : 1,
+                        y: showSquiggly && isMisspelledWord ? [0, 0, -10, -10, 0] : 0
+                      }}
+                      transition={{ 
+                        duration: showSquiggly && isMisspelledWord ? 2 : 0.3,
+                        times: [0, 0.15, 0.3, 0.5, 1]
                       }}
                     >
-                      {word}
-                    </span>
+                      {showSquiggly && isMisspelledWord ? currentSentences[currentRound].correctedWord : word}
+                    </motion.span>
 
                     {showSquiggly && isMisspelledWord && (
                       <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: [0, 1, 0], y: [10, 0, -10] }}
+                        transition={{ 
+                          duration: 0.6,
+                          times: [0, 0.5, 1],
+                          delay: 0.3 // Start after sign flip completes
+                        }}
                         style={{
                           position: 'absolute',
                           bottom: '-5px',
@@ -374,83 +302,24 @@ const Game: React.FC<GameProps> = ({
       </div>
 
       {/* Timer */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '1rem',
-          right: '1rem',
-          fontSize: '2rem',
-          fontFamily: 'monospace',
-          color: '#2c3e50'
-        }}
-      >
+      <div className="game-timer">
         {formatTime(time)}
       </div>
 
       {/* Six Shooter Barrel Progress */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '1rem',
-          left: '1rem',
-          width: '160px',
-          height: '160px'
-        }}
-      >
-        <SixShooterBarrel
-          roundResults={roundResults}
-        />
+      <div className="six-shooter-container">
+        <SixShooterBarrel roundResults={roundResults} />
       </div>
 
       {/* Pause Modal */}
       {showPauseModal && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 1000
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: 'white',
-              padding: '2rem',
-              borderRadius: '8px',
-              maxWidth: '80%',
-              textAlign: 'center'
-            }}
-          >
-            <h2
-              style={{
-                marginBottom: '1rem',
-                color: '#2c3e50'
-              }}
-            >
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 style={{ marginBottom: '1rem', color: '#2c3e50' }}>
               {t('gamePaused')}
             </h2>
-            <button
-              onClick={togglePause}
-              style={{
-                width: '60px',
-                height: '60px',
-                padding: '0.25rem',
-                border: 'none',
-                background: 'none',
-                cursor: 'pointer'
-              }}
-            >
-              <img
-                src={playIcon}
-                alt="Resume"
-                style={{ width: '100%', height: '100%' }}
-              />
+            <button className="game-button" onClick={togglePause}>
+              <img src={playIcon} alt="Resume" />
             </button>
           </div>
         </div>
@@ -458,38 +327,12 @@ const Game: React.FC<GameProps> = ({
 
       {/* Hint Modal */}
       {showHintModal && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 1000
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: 'white',
-              padding: '2rem',
-              borderRadius: '8px',
-              maxWidth: '80%',
-              textAlign: 'center'
-            }}
-          >
-            <h2
-              style={{
-                marginBottom: '1rem',
-                color: '#2c3e50'
-              }}
-            >
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 style={{ marginBottom: '1rem', color: '#2c3e50' }}>
               {t('useHint')}
             </h2>
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <div className="d-flex justify-content-center" style={{ gap: '1rem' }}>
               <button
                 onClick={handleHintConfirm}
                 style={{
@@ -531,20 +374,7 @@ const Game: React.FC<GameProps> = ({
 
       {/* Hint Active Toast */}
       {showHintActiveToast && (
-        <div
-          style={{
-            position: 'fixed',
-            bottom: '2rem',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            backgroundColor: '#c0392b',
-            color: 'white',
-            padding: '1rem 2rem',
-            borderRadius: '4px',
-            fontSize: '1rem',
-            zIndex: 1000
-          }}
-        >
+        <div className="toast">
           {t('hintAlreadyActive')}
         </div>
       )}

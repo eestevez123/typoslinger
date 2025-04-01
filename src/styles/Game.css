@@ -1,7 +1,282 @@
+/* Base styles */
 .gameBanner {
     font-family: "Just Another Hand", sans-serif;
-    color: '#2c3e50';
-    text-align: 'center';
-    margin-top: '1rem';
-    margin-bottom: '2rem';
+    color: #2c3e50;
+    text-align: center;
+    padding: 1rem;
+    font-size: 2rem;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.gameContainer {
+    background-image: url('../assets/images/scribble_bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100dvh;
+    width: 100dvw;
+    background-color: #FFF8E7;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Bootstrap-style positioning classes */
+.position-fixed {
+    position: fixed;
+}
+
+.position-absolute {
+    position: absolute;
+}
+
+.top-0 {
+    top: 0;
+}
+
+.bottom-0 {
+    bottom: 0;
+}
+
+.start-0 {
+    left: 0;
+}
+
+.end-0 {
+    right: 0;
+}
+
+.p-3 {
+    padding: 1rem;
+}
+
+.m-3 {
+    margin: 1rem;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+.justify-content-center {
+    justify-content: center;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+/* Game-specific positioning */
+.game-controls {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}
+
+.game-timer {
+    position: fixed;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    font-size: 1.5rem;
+    font-family: monospace;
+    color: #2c3e50;
+    z-index: 10;
+}
+
+.six-shooter-container {
+    position: fixed;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    width: 120px;
+    height: 120px;
+    z-index: 10;
+}
+
+.game-button {
+    width: 40px;
+    height: 40px;
+    padding: 0.25rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.game-button img {
+    width: 100%;
+    height: 100%;
+}
+
+.signGameContainer {
+    width: 95%;
+    height: 80dvh;
+    margin-top: 4rem;
+}
+
+/* Desktop styles */
+@media (min-width: 768px) {
+    .gameBanner {
+        font-size: 2.5rem;
+        padding: 1.5rem;
+    }
+
+    .game-controls {
+        padding: 1rem;
+    }
+
+    .game-timer {
+        bottom: 1rem;
+        right: 1rem;
+        font-size: 2rem;
+    }
+
+    .six-shooter-container {
+        bottom: 1rem;
+        left: 1rem;
+        width: 160px;
+        height: 160px;
+    }
+
+    .game-button {
+        width: 50px;
+        height: 50px;
+    }
+
+    .signGameContainer {
+        width: 60dvw;
+        height: 90dvh;
+        margin-top: 5rem;
+    }
+}
+
+/* Large desktop styles */
+@media (min-width: 1200px) {
+    .gameBanner {
+        font-size: 3rem;
+    }
+
+    .signGameContainer {
+        max-width: 50dvw;
+    }
+}
+
+/* Modal styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    max-width: 90%;
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .modal-content {
+        padding: 2rem;
+        max-width: 80%;
+    }
+}
+
+/* Toast styles */
+.toast {
+    position: fixed;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgb(149, 165, 166);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    z-index: 1000;
+}
+
+@media (min-width: 768px) {
+    .toast {
+        bottom: 2rem;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-height: 700px) {
+    .signGameContainerMotionDiv {
+        height: 80% !important;
+    }
+}
+
+.wordsContainer {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 65%;
+    height: 60%;
+    position: relative;
+    top: -13%;
+}
+
+.word-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+.word-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('../assets/images/word_background.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.25;
+    border-radius: 4px;
+    transition: opacity 0.2s;
+    pointer-events: none;
+}
+
+.word-container.inactive::before {
+    opacity: 0;
+}
+
+.word-text {
+    position: relative;
+    z-index: 1;
+    font-size: 1.5rem;
+    color: #000000;
+    font-weight: 500;
 }

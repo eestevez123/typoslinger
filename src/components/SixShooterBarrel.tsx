@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
 // Import assets
@@ -11,26 +11,48 @@ interface SixShooterBarrelProps {
 }
 
 const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults }) => {
-  // Shell positions in pixels relative to container top-left
-  const shellPositions = [
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    // Initial check
+    checkMobile();
+
+    // Add event listener
+    window.addEventListener('resize', checkMobile);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Shell positions in pixels for desktop
+  const desktopPositions = [
     { left: 87, top: 12 },   // top-right
     { left: 115, top: 53 },  // right
-    { left: 90, top: 96 }, // bottom-right
-    { left: 51, top: 98 },  // bottom
+    { left: 90, top: 96 },   // bottom-right
+    { left: 51, top: 98 },   // bottom
     { left: 19, top: 62 },   // bottom-left
     { left: 44, top: 21 }    // top-left
   ];
 
+  // Shell positions in pixels for mobile
+  const mobilePositions = [
+    { left: 65, top: 10 },   // top-right
+    { left: 85, top: 42 },   // right
+    { left: 68, top: 75 },   // bottom-right
+    { left: 38, top: 77 },   // bottom
+    { left: 14, top: 48 },   // bottom-left
+    { left: 33, top: 17 }    // top-left
+  ];
+
+  const shellPositions = isMobile ? mobilePositions : desktopPositions;
+  const shellSize = isMobile ? 25 : 35;
+
   return (
-    <div
-      style={{
-        position: 'absolute',
-        bottom: '1rem',
-        left: '1rem',
-        width: '160px',
-        height: '160px'
-      }}
-    >
+    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       {/* Base barrel image */}
       <img
         src={sixShooterBarrel}
@@ -65,8 +87,8 @@ const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults }) => 
                 key={index}
                 style={{
                   position: 'absolute',
-                  width: '35px',
-                  height: '35px',
+                  width: `${shellSize}px`,
+                  height: `${shellSize}px`,
                   left: position.left,
                   top: position.top
                 }}
@@ -85,8 +107,8 @@ const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults }) => 
               transition={{ duration: 0.3 }}
               style={{
                 position: 'absolute',
-                width: '35px',
-                height: '35px',
+                width: `${shellSize}px`,
+                height: `${shellSize}px`,
                 left: position.left,
                 top: position.top
               }}
