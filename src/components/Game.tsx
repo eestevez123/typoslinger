@@ -49,6 +49,7 @@ const Game: React.FC<GameProps> = ({
   const [showSquiggly, setShowSquiggly] = useState(false);
   const [isSignSpinning, setIsSignSpinning] = useState(false);
   const [isWordClicked, setIsWordClicked] = useState(false);
+  const [showCorrectWord, setShowCorrectWord] = useState(false);
 
   // Get current language's sentences
   const currentSentences = sentences[i18n.language.split('-')[0]] || sentences.en;
@@ -122,12 +123,22 @@ const Game: React.FC<GameProps> = ({
     // After sign flip completes (300ms), start word animation sequence
     setTimeout(() => {
       setIsSignSpinning(false); // Sign is back to original position
-      setShowSquiggly(true); // Start word animation sequence
+      setShowSquiggly(true); // Show squiggly line
     }, 300);
 
-    // After all animations complete, proceed to next round
+    // After 1 second, show correct word and fade out misspelled word
+    setTimeout(() => {
+      setShowCorrectWord(true);
+    }, 1300);
+
+    // After 1.8 seconds, fade out the squiggly line
     setTimeout(() => {
       setShowSquiggly(false);
+    }, 1800);
+
+    // After 2 seconds, proceed to next round
+    setTimeout(() => {
+      setShowCorrectWord(false);
       setIsWordClicked(false);
       
       if (isCorrect) {
@@ -257,40 +268,25 @@ const Game: React.FC<GameProps> = ({
                     className={`word-container ${!shouldShowBackground ? 'inactive' : ''}`}
                     onClick={() => shouldShowBackground && handleWordClick(word)}
                   >
-                    <motion.span 
+                    <motion.span
                       className="word-text"
-                      initial={{ opacity: 1, y: 0 }}
-                      animate={{ 
-                        opacity: showSquiggly && isMisspelledWord ? [1, 1, 0, 0, 1] : 1,
-                        y: showSquiggly && isMisspelledWord ? [0, 0, -10, -10, 0] : 0
+                      initial={{ opacity: 1 }}
+                      animate={{
+                        opacity: showSquiggly && isMisspelledWord && !showCorrectWord ? 1 : 
+                                showCorrectWord && isMisspelledWord ? 1 : 1
                       }}
-                      transition={{ 
-                        duration: showSquiggly && isMisspelledWord ? 2 : 0.3,
-                        times: [0, 0.15, 0.3, 0.5, 1]
-                      }}
+                      transition={{ duration: 0.3 }}
                     >
-                      {showSquiggly && isMisspelledWord ? currentSentences[currentRound].correctedWord : word}
+                      {showCorrectWord && isMisspelledWord ? 
+                        currentSentences[currentRound].correctedWord + (word.match(/[.,!?]$/)?.[0] || '') : 
+                        word}
                     </motion.span>
-
                     {showSquiggly && isMisspelledWord && (
                       <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: [0, 1, 0], y: [10, 0, -10] }}
-                        transition={{ 
-                          duration: 0.6,
-                          times: [0, 0.5, 1],
-                          delay: 0.3 // Start after sign flip completes
-                        }}
-                        style={{
-                          position: 'absolute',
-                          bottom: '-5px',
-                          left: 0,
-                          right: 0,
-                          height: '4px',
-                          background: `url("data:image/svg+xml,%3Csvg width='20' height='4' viewBox='0 0 20 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 0 2 Q 2.5 0, 5 2 T 10 2 T 15 2 T 20 2' stroke='%23e74c3c' fill='none' stroke-width='2'/%3E%3C/svg%3E")`,
-                          backgroundRepeat: 'repeat-x',
-                          backgroundSize: '20px 4px'
-                        }}
+                        className="squiggly-line"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3 }}
                       />
                     )}
                   </div>

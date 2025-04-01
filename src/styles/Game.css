@@ -271,15 +271,18 @@
     transition: scale 0.2s;
     scale: 1;
     pointer-events: none;
+    box-shadow: 0 0 8px 8px #FFF8E7 inset;
 }
 
 .word-container:hover::before { 
     opacity: 0.4;
     scale: 1.05;
+    box-shadow: 0 0 8px 8px #FFF8E7 inset;
 }
 
 .word-container.inactive::before {
     opacity: 0;
+    box-shadow: none;
 }
 
 .word-text {
@@ -288,4 +291,18 @@
     font-size: 7dvmin;
     color: #000000;
     font-weight: 500;
+}
+
+.squiggly-line {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    height: 12px;
+    background-image: url('../assets/images/typo_squiggly_line.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    pointer-events: none;
+    transform: scale(1.2);
 }
