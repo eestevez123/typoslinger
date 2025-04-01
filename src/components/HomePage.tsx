@@ -107,7 +107,7 @@ const HomePage: React.FC = () => {
             style={{
               fontFamily: '"Patrick Hand", serif',
               color: '#2c3e50',
-              fontSize: '2.5rem'
+              fontSize: '8dvmin'
             }}
           >
             {t('language')}:
@@ -121,7 +121,7 @@ const HomePage: React.FC = () => {
               borderRadius: '4px',
               padding: '0.5rem',
               fontFamily: '"Patrick Hand", serif',
-              fontSize: '2rem'
+              fontSize: '6dvmin'
             }}
           >
             <option value="en">English</option>
@@ -187,16 +187,8 @@ const HomePage: React.FC = () => {
 
         {/* How to Play Button */}
         <button
+          className="howToPlayBtn"
           onClick={() => setShowHowToPlay(true)}
-          style={{
-            color: '#2c3e50',
-            border: '2px solid #2c3e50',
-            fontSize: '1.5rem',
-            marginBottom: '1rem',
-            background: 'none',
-            cursor: 'pointer',
-            padding: '0.5rem 1rem'
-          }}
         >
           {t('howToPlay')}
         </button>

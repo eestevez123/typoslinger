@@ -237,12 +237,14 @@
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: flex-start;
     width: 65%;
     height: 60%;
     position: relative;
-    top: -13%;
+    top: -10%;
+    flex-direction: row;
+    align-content: flex-start;
 }
 
 .word-container {
@@ -263,10 +265,17 @@
     background-image: url('../assets/images/word_background.png');
     background-size: cover;
     background-position: center;
-    opacity: 0.25;
+    opacity: 0.2;
     border-radius: 4px;
     transition: opacity 0.2s;
+    transition: scale 0.2s;
+    scale: 1;
     pointer-events: none;
+}
+
+.word-container:hover::before { 
+    opacity: 0.4;
+    scale: 1.05;
 }
 
 .word-container.inactive::before {
@@ -276,7 +285,7 @@
 .word-text {
     position: relative;
     z-index: 1;
-    font-size: 1.5rem;
+    font-size: 7dvmin;
     color: #000000;
     font-weight: 500;
 }
