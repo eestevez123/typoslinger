@@ -291,18 +291,23 @@
     font-size: 7dvmin;
     color: #000000;
     font-weight: 500;
+    transition: opacity 0.3s ease-in-out;
 }
 
 .squiggly-line {
     position: absolute;
-    bottom: 10px;
+    bottom: -2px;
     left: 0;
     right: 0;
     height: 12px;
     background-image: url('../assets/images/typo_squiggly_line.png');
-    background-size: 100% 100%;
+    background-size: auto 100%;
     background-repeat: no-repeat;
     background-position: center;
     pointer-events: none;
     transform: scale(1.2);
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+    transition: opacity 0.3s ease-in-out;
 }

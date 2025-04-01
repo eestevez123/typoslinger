@@ -5,15 +5,19 @@ import { motion } from 'framer-motion';
 import sixShooterBarrel from '../assets/images/six_shooter_barrel.png';
 import successShell from '../assets/images/success_shell.png';
 import missShell from '../assets/images/miss_shell.png';
+import barrelSpinSound from '../assets/audio/barrel_spin.mp3';
+import gunGettingReadySound from '../assets/audio/gun_getting_ready.wav';
 
 interface SixShooterBarrelProps {
   roundResults: Array<{ hit: boolean, usedHint: boolean }>;
+  isAudioOn: boolean;
 }
 
-const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults }) => {
+const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults, isAudioOn }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
   const [canSpin, setCanSpin] = useState(true);
+  const [hasPlayedInitialSpin, setHasPlayedInitialSpin] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -26,15 +30,36 @@ const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults }) => 
     // Add event listener
     window.addEventListener('resize', checkMobile);
 
+    // Play barrel spin sound on game load if audio is on
+    if (isAudioOn && !hasPlayedInitialSpin) {
+      setIsSpinning(true);
+      const audio = new Audio(barrelSpinSound);
+      audio.play();
+
+      // After spin animation completes, play gun getting ready sound
+      setTimeout(() => {
+        setIsSpinning(false);
+        const readyAudio = new Audio(gunGettingReadySound);
+        readyAudio.play();
+        setHasPlayedInitialSpin(true);
+      }, 800); // Match the spin animation duration
+    }
+
     // Cleanup
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [isAudioOn, hasPlayedInitialSpin]);
 
   const handleSpin = () => {
     if (!canSpin) return;
     
     setIsSpinning(true);
     setCanSpin(false);
+
+    // Play barrel spin sound if audio is on
+    if (isAudioOn) {
+      const audio = new Audio(barrelSpinSound);
+      audio.play();
+    }
 
     // Reset spinning state after animation
     setTimeout(() => {
@@ -44,7 +69,7 @@ const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults }) => 
     // Reset cooldown after 5 seconds
     setTimeout(() => {
       setCanSpin(true);
-    }, 2000);
+    }, 5000);
   };
 
   // Shell positions in pixels for desktop
@@ -91,7 +116,8 @@ const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults }) => 
           height: '100%',
           position: 'absolute',
           cursor: canSpin ? 'pointer' : 'default',
-          transformOrigin: 'center center'
+          transformOrigin: 'center center',
+          userSelect: 'none'
         }}
       />
 

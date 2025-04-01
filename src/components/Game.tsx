@@ -69,7 +69,7 @@ const Game: React.FC<GameProps> = ({
   }, [isPaused]);
 
   useEffect(() => {
-    if (isAudioOn) {
+    if (isAudioOn && currentRound > 0) {
       playGunReady();
     }
   }, [currentRound, isAudioOn]);
@@ -276,6 +276,7 @@ const Game: React.FC<GameProps> = ({
                                 showCorrectWord && isMisspelledWord ? 1 : 1
                       }}
                       transition={{ duration: 0.3 }}
+                      style={{ transition: 'opacity 0.3s ease-in-out' }}
                     >
                       {showCorrectWord && isMisspelledWord ? 
                         currentSentences[currentRound].correctedWord + (word.match(/[.,!?]$/)?.[0] || '') : 
@@ -287,6 +288,7 @@ const Game: React.FC<GameProps> = ({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.3 }}
+                        style={{ transition: 'opacity 0.3s ease-in-out' }}
                       />
                     )}
                   </div>
@@ -304,7 +306,7 @@ const Game: React.FC<GameProps> = ({
 
       {/* Six Shooter Barrel Progress */}
       <div className="six-shooter-container">
-        <SixShooterBarrel roundResults={roundResults} />
+        <SixShooterBarrel roundResults={roundResults} isAudioOn={isAudioOn} />
       </div>
 
       {/* Pause Modal */}
