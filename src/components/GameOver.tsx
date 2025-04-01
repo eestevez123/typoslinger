@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Button, Typography, Snackbar } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import SixShooterBarrel from './SixShooterBarrel';
 
 interface GameOverProps {
   hits: number;
@@ -65,123 +65,135 @@ const GameOver: React.FC<GameOverProps> = ({
     });
   };
 
-  const handleCloseToast = () => {
-    setCopySuccess(false);
-    setCopyError(false);
-  };
-
   return (
-    <Box
-      sx={{
+    <div
+      style={{
         height: '100dvh',
         width: '100dvw',
-        bgcolor: '#FFF8E7',
+        backgroundColor: '#FFF8E7',
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        pt: 2
+        paddingTop: '1rem'
       }}
     >
       {/* Banner */}
-      <Typography
-        variant="h3"
-        sx={{
-          fontFamily: 'Rye',
+      <h1
+        style={{
           color: '#2c3e50',
           textAlign: 'center',
-          mb: 4
+          marginBottom: '2rem'
         }}
       >
         TypoSlinger
-      </Typography>
+      </h1>
 
       {/* Score Display */}
-      <Box
-        sx={{
+      <div
+        style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 4,
-          mb: 4
+          gap: '2rem',
+          marginBottom: '2rem'
         }}
       >
-        <Typography
-          variant="h4"
-          sx={{
-            fontFamily: 'Rye',
-            color: '#2c3e50'
+        <h2
+          style={{
+            
+            color: '#2c3e50',
+            margin: 0
           }}
         >
           {hits}/6
-        </Typography>
-        <Typography
-          variant="h4"
-          sx={{
-            fontFamily: 'Rye',
-            color: '#2c3e50'
+        </h2>
+        <h2
+          style={{
+            
+            color: '#2c3e50',
+            margin: 0
           }}
         >
           💡 {hintsUsed}
-        </Typography>
-        <Typography
-          variant="h4"
-          sx={{
+        </h2>
+        <h2
+          style={{
             fontFamily: 'monospace',
-            color: '#2c3e50'
+            color: '#2c3e50',
+            margin: 0
           }}
         >
           {time}s
-        </Typography>
-      </Box>
+        </h2>
+      </div>
+
+      {/* Six Shooter Barrel */}
+      <div
+        style={{
+          width: '160px',
+          height: '160px',
+          marginBottom: '2rem'
+        }}
+      >
+        <SixShooterBarrel
+          roundResults={roundResults}
+        />
+      </div>
 
       {/* Share Button */}
-      <Button
-        variant="contained"
+      <button
         onClick={generateShareText}
-        sx={{
-          bgcolor: '#e67e22',
+        style={{
+          backgroundColor: '#e67e22',
           color: 'white',
           fontSize: '1.2rem',
           padding: '0.5rem 2rem',
-          mb: 4,
-          fontFamily: 'Rye',
-          '&:hover': {
-            bgcolor: '#d35400'
-          }
+          marginBottom: '2rem',
+          
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          transition: 'background-color 0.2s'
         }}
+        onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#d35400'}
+        onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#e67e22'}
       >
         {t('shareResults')}
-      </Button>
+      </button>
 
       {/* Toast Message */}
-      <Snackbar
-        open={copySuccess || copyError}
-        autoHideDuration={3000}
-        onClose={handleCloseToast}
-        message={copySuccess ? t('resultsCopied') : copyError ? t('copyError') : ''}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        sx={{
-          '& .MuiSnackbarContent-root': {
-            bgcolor: '#2c3e50',
+      {(copySuccess || copyError) && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '2rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            backgroundColor: '#2c3e50',
             color: 'white',
+            padding: '1rem 2rem',
+            borderRadius: '4px',
+            
             fontSize: '1.1rem',
-            fontFamily: 'Rye'
-          }
-        }}
-      />
+            zIndex: 1000
+          }}
+        >
+          {copySuccess ? t('resultsCopied') : copyError ? t('copyError') : ''}
+        </div>
+      )}
 
       {/* Come Back Message */}
-      <Typography
-        variant="h6"
-        sx={{
+      <h3
+        style={{
           color: '#2c3e50',
           textAlign: 'center',
-          fontFamily: 'Rye'
+          
+          margin: 0
         }}
       >
         {t('comeBackMessage')}
-      </Typography>
-    </Box>
+      </h3>
+    </div>
   );
 };
 

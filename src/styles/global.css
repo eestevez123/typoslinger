@@ -1,0 +1,50 @@
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Patrick Hand", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #ffffff;
+  color: #2c3e50;
+  line-height: 1.5;
+}
+
+/* Global link styles */
+a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Global button styles */
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Global heading styles */
+h1, h2, h3, h4, h5, h6 {
+  color: #2c3e50;
+  line-height: 1.2;
+}
+
+/* Global paragraph styles */
+p {
+  margin-bottom: 1rem;
+}
+
+/* Global container styles */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+} 

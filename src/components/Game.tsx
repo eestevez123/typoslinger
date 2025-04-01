@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Box, IconButton, Typography, Modal, Snackbar } from '@mui/material';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 // Import assets
 import audioOnIcon from '../assets/images/audio_on.png';
 import audioOffIcon from '../assets/images/audio_off.png';
 import signIcon from '../assets/images/sign.png';
-import wordBackgroundIcon from '../assets/images/word_background.png';
 import pauseIcon from '../assets/images/pause_btn.png';
 import playIcon from '../assets/images/pause_btn_play.png';
 import hintsIcon from '../assets/images/lightbulb.png';
@@ -18,6 +16,8 @@ import SixShooterBarrel from './SixShooterBarrel';
 import { playGunShot, playGunReady } from '../utils/sound';
 import HowToPlay from './HowToPlay';
 import { sentences } from '../config/sentences';
+
+import "../styles/Game.css";
 
 interface GameProps {
   onEndGame: (hits: number, misses: number, hintsUsed: number, time: number) => void;
@@ -46,7 +46,6 @@ const Game: React.FC<GameProps> = ({
   const [isHintActive, setIsHintActive] = useState(false);
   const [roundResults, setRoundResults] = useState<Array<{ hit: boolean, usedHint: boolean }>>([]);
   const [clickableIndices, setClickableIndices] = useState<number[] | null>(null);
-  const [animatingWordIndex, setAnimatingWordIndex] = useState<number | null>(null);
   const [showSquiggly, setShowSquiggly] = useState(false);
   const [isSignSpinning, setIsSignSpinning] = useState(false);
 
@@ -113,12 +112,6 @@ const Game: React.FC<GameProps> = ({
     const cleanWord = word.replace(/\./g, '');
     const isCorrect = cleanWord === currentSentences[currentRound].misspelledWord;
     
-    // Find the index of the misspelled word
-    const misspelledIndex = currentSentences[currentRound].text.split(' ').findIndex(w => 
-      w.replace(/\./g, '') === currentSentences[currentRound].misspelledWord
-    );
-    
-    setAnimatingWordIndex(misspelledIndex);
     setIsSignSpinning(true);
 
     // Start animation sequence
@@ -158,7 +151,6 @@ const Game: React.FC<GameProps> = ({
         setIsGameOver(true);
         onEndGame(finalHits, finalMisses, hintsUsed,  Math.round(timeTaken));
       }
-      setAnimatingWordIndex(null);
     }, 2300); // Total animation duration
   };
 
@@ -186,33 +178,26 @@ const Game: React.FC<GameProps> = ({
   }
 
   return (
-    <Box
-    sx={{
-      height: '100dvh',
-      width: '100dvw',
-      bgcolor: '#FFF8E7',
-      position: 'relative',
-      overflow: 'hidden',
-      minHeight: '100dvh',
-    }}
+    <div
+      style={{
+        height: '100dvh',
+        width: '100dvw',
+        backgroundColor: '#FFF8E7',
+        position: 'relative',
+        overflow: 'hidden',
+        minHeight: '100dvh'
+      }}
     >
       {/* Banner */}
-      <Typography
-        variant="h3"
-        sx={{
-          fontFamily: "'Rye', serif",
-          color: '#2c3e50',
-          textAlign: 'center',
-          mt: 2,
-          mb: 4
-        }}
+      <h3
+      className="gameBanner"
       >
         TypoSlinger
-      </Typography>
+      </h3>
 
       {/* Top Bar */}
-      <Box
-        sx={{
+      <div
+        style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -221,12 +206,15 @@ const Game: React.FC<GameProps> = ({
         }}
       >
         {/* Pause Button */}
-        <IconButton
+        <button
           onClick={togglePause}
-          sx={{
+          style={{
             width: '50px',
             height: '50px',
-            padding: 1
+            padding: '0.25rem',
+            border: 'none',
+            background: 'none',
+            cursor: 'pointer'
           }}
         >
           <img
@@ -234,16 +222,19 @@ const Game: React.FC<GameProps> = ({
             alt={isPaused ? "Resume" : "Pause"}
             style={{ width: '100%', height: '100%' }}
           />
-        </IconButton>
+        </button>
 
         {/* Right side - Hints and Audio */}
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <IconButton
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <button
             onClick={handleHintClick}
-            sx={{
+            style={{
               width: '50px',
               height: '50px',
-              padding: 1
+              padding: '0.25rem',
+              border: 'none',
+              background: 'none',
+              cursor: 'pointer'
             }}
           >
             <img
@@ -251,13 +242,16 @@ const Game: React.FC<GameProps> = ({
               alt="Use Hint"
               style={{ width: '100%', height: '100%' }}
             />
-          </IconButton>
-          <IconButton
+          </button>
+          <button
             onClick={onAudioToggle}
-            sx={{
+            style={{
               width: '50px',
               height: '50px',
-              padding: 1
+              padding: '0.25rem',
+              border: 'none',
+              background: 'none',
+              cursor: 'pointer'
             }}
           >
             <img
@@ -265,27 +259,27 @@ const Game: React.FC<GameProps> = ({
               alt={isAudioOn ? "Audio On" : "Audio Off"}
               style={{ width: '100%', height: '100%' }}
             />
-          </IconButton>
-        </Box>
-      </Box>
+          </button>
+        </div>
+      </div>
 
       {/* Main Game Area */}
-      <Box
-        sx={{
+      <div
+        style={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: {xs: 'calc(100dvh - 400px)', md: 'calc(100dvh - 250px)'},
+          height: 'calc(100dvh - 200px)',
           position: 'relative',
-          mt: { xs: 2, md: 0 },
-          mb: { xs: 4, md: 0 }
+          marginTop: '1rem',
+          marginBottom: '2rem'
         }}
       >
-        <Box
-          sx={{
-            width: { xs: '65%', md: '50%' },
+        <div
+          style={{
+            width: '90%',
             maxWidth: '1600px',
-            height: { xs: '50dvh', md: '90dvh' }
+            height: '90dvh'
           }}
         >
           <motion.div
@@ -310,142 +304,80 @@ const Game: React.FC<GameProps> = ({
               perspective: '1000px'
             }}
           >
-            <Box
-              sx={{
+            <div
+              style={{
                 display: 'flex',
-                gap: 2,
+                gap: '1rem',
                 flexWrap: 'wrap',
                 justifyContent: 'center',
                 alignItems: 'center',
-                width: { xs: '70%', md: '50%' },
+                width: '50%',
                 height: '40%',
                 position: 'relative',
-                top: { xs: '-10%', md: '-8%' }
+                top: '-8%'
               }}
             >
               {currentSentences[currentRound].text.split(' ').map((word, index) => {
                 const shouldShowBackground = !isHintActive || (clickableIndices && clickableIndices.includes(index));
-                const isAnimating = index === animatingWordIndex;
                 const cleanWord = word.replace(/\./g, '');
                 const isMisspelledWord = cleanWord === currentSentences[currentRound].misspelledWord;
-                const correctedWord = isMisspelledWord ? currentSentences[currentRound].correctedWord : word;
 
                 return (
-                  <motion.div
+                  <div
                     key={index}
-                    onClick={() => shouldShowBackground ? handleWordClick(word) : null}
                     style={{
-                      backgroundImage: shouldShowBackground ? `url(${wordBackgroundIcon})` : 'none',
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      padding: '0.5rem 1rem',
-                      cursor: shouldShowBackground ? 'pointer' : 'default',
                       position: 'relative',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      borderRadius: '25px',
-                      transition: 'box-shadow 0.1s ease'
+                      display: 'inline-block',
+                      cursor: shouldShowBackground ? 'pointer' : 'default',
+                      padding: '0.5rem',
+                      borderRadius: '4px',
+                      backgroundColor: shouldShowBackground ? 'rgba(255, 255, 255, 0.8)' : 'transparent',
+                      transition: 'background-color 0.2s'
                     }}
-                    whileHover={shouldShowBackground ? {
-                      boxShadow: '0 0 8px 3px #e67e22'
-                    } : {}}
-                    whileTap={shouldShowBackground ? { scale: 0.95 } : {}}
+                    onClick={() => shouldShowBackground && handleWordClick(word)}
                   >
-                    <AnimatePresence mode="wait">
-                      {isAnimating ? (
-                        <motion.div
-                          key="animating"
-                          initial={{ opacity: 1 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.5 }}
-                          style={{ position: 'relative' }}
-                        >
-                          <motion.h2
-                            initial={{ opacity: 1 }}
-                            animate={{ opacity: showSquiggly ? 1 : 0 }}
-                            transition={{ duration: 0.3 }}
-                            style={{
-                              fontFamily: '"Just Another Hand", cursive',
-                              color: 'white',
-                              fontSize: 'clamp(1.2rem, 4vw, 2rem)',
-                              textShadow: '2px 2px 4px rgba(0,0,0,0.3), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-                              margin: 0,
-                              position: 'relative'
-                            }}
-                          >
-                            {word}
-                          </motion.h2>
-                          {showSquiggly && isMisspelledWord && (
-                            <motion.div
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              transition={{ duration: 0.3 }}
-                              style={{
-                                position: 'absolute',
-                                bottom: '-5px',
-                                left: 0,
-                                right: 0,
-                                height: '4px',
-                                background: `url("data:image/svg+xml,%3Csvg width='20' height='4' viewBox='0 0 20 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 0 2 Q 2.5 0, 5 2 T 10 2 T 15 2 T 20 2' stroke='%23e74c3c' fill='none' stroke-width='2'/%3E%3C/svg%3E")`,
-                                backgroundRepeat: 'repeat-x',
-                                backgroundSize: '20px 4px'
-                              }}
-                            />
-                          )}
-                          {!showSquiggly && isMisspelledWord && (
-                            <motion.h2
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ duration: 0.3 }}
-                              style={{
-                                fontFamily: '"Just Another Hand", cursive',
-                                color: 'white',
-                                fontSize: 'clamp(1.2rem, 4vw, 2rem)',
-                                textShadow: '2px 2px 4px rgba(0,0,0,0.3), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-                                margin: 0,
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                right: 0
-                              }}
-                            >
-                              {correctedWord}
-                            </motion.h2>
-                          )}
-                        </motion.div>
-                      ) : (
-                        <motion.h2
-                          key="static"
-                          initial={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          style={{
-                            fontFamily: '"Just Another Hand", cursive',
-                            color: 'white',
-                            fontSize: 'clamp(1.2rem, 4vw, 2rem)',
-                            textShadow: '2px 2px 4px rgba(0,0,0,0.3), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-                            margin: 0
-                          }}
-                        >
-                          {word}
-                        </motion.h2>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
+                    <span
+                      style={{
+                        fontSize: '1.5rem',
+                        color: '#2c3e50',
+                        position: 'relative',
+                        zIndex: 1
+                      }}
+                    >
+                      {word}
+                    </span>
+
+                    {showSquiggly && isMisspelledWord && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        style={{
+                          position: 'absolute',
+                          bottom: '-5px',
+                          left: 0,
+                          right: 0,
+                          height: '4px',
+                          background: `url("data:image/svg+xml,%3Csvg width='20' height='4' viewBox='0 0 20 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 0 2 Q 2.5 0, 5 2 T 10 2 T 15 2 T 20 2' stroke='%23e74c3c' fill='none' stroke-width='2'/%3E%3C/svg%3E")`,
+                          backgroundRepeat: 'repeat-x',
+                          backgroundSize: '20px 4px'
+                        }}
+                      />
+                    )}
+                  </div>
                 );
               })}
-            </Box>
+            </div>
           </motion.div>
-        </Box>
-      </Box>
+        </div>
+      </div>
 
       {/* Timer */}
-      <Typography
-        sx={{
+      <div
+        style={{
           position: 'absolute',
-          bottom: { xs: '5rem', md: '1rem' },
+          bottom: '1rem',
           right: '1rem',
           fontSize: '2rem',
           fontFamily: 'monospace',
@@ -453,153 +385,173 @@ const Game: React.FC<GameProps> = ({
         }}
       >
         {formatTime(time)}
-      </Typography>
+      </div>
 
       {/* Six Shooter Barrel Progress */}
-      <Box
-        sx={{
+      <div
+        style={{
           position: 'absolute',
-          bottom: { xs: '1rem', md: '1rem' },
+          bottom: '1rem',
           left: '1rem',
-          width: { xs: '90%', md: 'auto' },
-          maxWidth: '600px'
+          width: '160px',
+          height: '160px'
         }}
       >
         <SixShooterBarrel
           roundResults={roundResults}
         />
-      </Box>
+      </div>
 
       {/* Pause Modal */}
-      <Modal
-        open={showPauseModal}
-        onClose={togglePause}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        <Box
-          sx={{
-            bgcolor: 'white',
-            p: 4,
-            borderRadius: 2,
-            maxWidth: '80%',
-            textAlign: 'center'
+      {showPauseModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 1000
           }}
         >
-          <Typography variant="h5" sx={{ 
-            mb: 2,
-            fontFamily: "'Rye', serif",
-            color: '#2c3e50'
-          }}>
-            {t('gamePaused')}
-          </Typography>
-          <IconButton
-            onClick={togglePause}
-            sx={{
-              width: '60px',
-              height: '60px',
-              padding: 1
+          <div
+            style={{
+              backgroundColor: 'white',
+              padding: '2rem',
+              borderRadius: '8px',
+              maxWidth: '80%',
+              textAlign: 'center'
             }}
           >
-            <img
-              src={playIcon}
-              alt="Resume"
-              style={{ width: '100%', height: '100%' }}
-            />
-          </IconButton>
-        </Box>
-      </Modal>
+            <h2
+              style={{
+                marginBottom: '1rem',
+                color: '#2c3e50'
+              }}
+            >
+              {t('gamePaused')}
+            </h2>
+            <button
+              onClick={togglePause}
+              style={{
+                width: '60px',
+                height: '60px',
+                padding: '0.25rem',
+                border: 'none',
+                background: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              <img
+                src={playIcon}
+                alt="Resume"
+                style={{ width: '100%', height: '100%' }}
+              />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Hint Modal */}
-      <Modal
-        open={showHintModal}
-        onClose={() => setShowHintModal(false)}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        <Box
-          sx={{
-            bgcolor: 'white',
-            p: 4,
-            borderRadius: 2,
-            maxWidth: '80%',
-            textAlign: 'center'
+      {showHintModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 1000
           }}
         >
-          <Typography variant="h5" sx={{ 
-            mb: 3,
-            fontFamily: "'Rye', serif",
-            color: '#2c3e50'
-          }}>
-            {t('useHint')}
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 3, justifyContent: 'center' }}>
-            <IconButton
-              onClick={handleHintConfirm}
-              sx={{
-                bgcolor: '#27ae60',
-                color: 'white',
-                px: 3,
-                py: 1,
-                borderRadius: 2,
-                fontFamily: "'Rye', serif",
-                fontSize: '1.2rem',
-                '&:hover': {
-                  bgcolor: '#219a52'
-                }
+          <div
+            style={{
+              backgroundColor: 'white',
+              padding: '2rem',
+              borderRadius: '8px',
+              maxWidth: '80%',
+              textAlign: 'center'
+            }}
+          >
+            <h2
+              style={{
+                marginBottom: '1rem',
+                color: '#2c3e50'
               }}
             >
-              {t('yes')}
-            </IconButton>
-            <IconButton
-              onClick={() => setShowHintModal(false)}
-              sx={{
-                bgcolor: '#c0392b',
-                color: 'white',
-                px: 3,
-                py: 1,
-                borderRadius: 2,
-                fontFamily: "'Rye', serif",
-                fontSize: '1.2rem',
-                '&:hover': {
-                  bgcolor: '#a93226'
-                }
-              }}
-            >
-              {t('no')}
-            </IconButton>
-          </Box>
-        </Box>
-      </Modal>
+              {t('useHint')}
+            </h2>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button
+                onClick={handleHintConfirm}
+                style={{
+                  backgroundColor: '#e67e22',
+                  color: 'white',
+                  fontSize: '1.2rem',
+                  padding: '0.5rem 2rem',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#d35400'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#e67e22'}
+              >
+                {t('yes')}
+              </button>
+              <button
+                onClick={() => setShowHintModal(false)}
+                style={{
+                  backgroundColor: '#95a5a6',
+                  color: 'white',
+                  fontSize: '1.2rem',
+                  padding: '0.5rem 2rem',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#7f8c8d'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#95a5a6'}
+              >
+                {t('no')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Hint Active Toast */}
-      <Snackbar
-        open={showHintActiveToast}
-        autoHideDuration={2000}
-        onClose={() => setShowHintActiveToast(false)}
-        message={t('hintAlreadyActive')}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        sx={{
-          '& .MuiSnackbarContent-root': {
-            bgcolor: '#c0392b',
+      {showHintActiveToast && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '2rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            backgroundColor: '#c0392b',
             color: 'white',
-            fontFamily: "'Rye', serif",
-            fontSize: '1rem'
-          }
-        }}
-      />
+            padding: '1rem 2rem',
+            borderRadius: '4px',
+            fontSize: '1rem',
+            zIndex: 1000
+          }}
+        >
+          {t('hintAlreadyActive')}
+        </div>
+      )}
 
       {/* How to Play Modal */}
-      {showHowToPlay && (
-        <HowToPlay onClose={() => setShowHowToPlay(false)} />
-      )}
-    </Box>
+      {showHowToPlay && <HowToPlay onClose={() => setShowHowToPlay(false)} />}
+    </div>
   );
 };
 

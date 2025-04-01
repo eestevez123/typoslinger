@@ -1,13 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Button, 
-  Select, 
-  MenuItem, 
-  IconButton,
-  SelectChangeEvent
-} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import Game from './Game';
@@ -20,6 +11,8 @@ import audioOnIcon from '../assets/images/audio_on.png';
 import audioOffIcon from '../assets/images/audio_off.png';
 import cactusIcon from '../assets/images/cactus.png';
 import tumbleweedIcon from '../assets/images/tumbleweed.png';
+
+import "../styles/HomePage.css";
 
 const HomePage: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -39,7 +32,7 @@ const HomePage: React.FC = () => {
     toggleAudio(true);
   }, []);
 
-  const handleLanguageChange = (event: SelectChangeEvent) => {
+  const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     i18n.changeLanguage(event.target.value);
   };
 
@@ -89,19 +82,19 @@ const HomePage: React.FC = () => {
   }
 
   return (
-    <Box
-      sx={{
+    <div
+      style={{
         height: '100dvh',
         display: 'flex',
         flexDirection: 'column',
-        bgcolor: '#FFF8E7',
+        backgroundColor: '#FFF8E7',
         position: 'relative',
         overflow: 'hidden'
       }}
     >
       {/* Top Bar */}
-      <Box
-        sx={{
+      <div
+        style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -109,36 +102,42 @@ const HomePage: React.FC = () => {
           width: '100%'
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography
-            sx={{
-              fontFamily: '"Just Another Hand", serif',
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span
+            style={{
+              fontFamily: '"Patrick Hand", serif',
               color: '#2c3e50',
-              fontSize: '1.2rem'
+              fontSize: '2.5rem'
             }}
           >
             {t('language')}:
-          </Typography>
-          <Select
+          </span>
+          <select
             value={i18n.language}
             onChange={handleLanguageChange}
-            sx={{
-              bgcolor: 'white',
-              width: '120px',
-              height: '40px'
+            style={{
+              backgroundColor: 'white',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              padding: '0.5rem',
+              fontFamily: '"Patrick Hand", serif',
+              fontSize: '2rem'
             }}
           >
-            <MenuItem value="en">English</MenuItem>
-            <MenuItem value="es">Español</MenuItem>
-          </Select>
-        </Box>
+            <option value="en">English</option>
+            <option value="es">Español</option>
+          </select>
+        </div>
 
-        <IconButton 
+        <button
           onClick={handleAudioToggle}
-          sx={{
+          style={{
             width: '60px',
             height: '60px',
-            padding: 1
+            padding: '0.25rem',
+            border: 'none',
+            background: 'none',
+            cursor: 'pointer'
           }}
         >
           <img 
@@ -146,67 +145,62 @@ const HomePage: React.FC = () => {
             alt={isAudioOn ? "Audio On" : "Audio Off"}
             style={{ width: '100%', height: '100%' }}
           />
-        </IconButton>
-      </Box>
+        </button>
+      </div>
 
       {/* Main Content */}
-      <Box
-        sx={{
+      <div
+        style={{
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: 4
+          gap: '2rem'
         }}
       >
         {/* Title */}
-        <Typography
-          variant="h1"
-          sx={{
-            fontFamily: "'Rye', serif",
-            color: '#2c3e50',
-            textAlign: 'center',
-            fontSize: { xs: '3rem', sm: '4rem', md: '5rem' },
-            mb: 4
-          }}
-        >
+        <h1 className="gameTitle">
           TypoSlinger
-        </Typography>
+        </h1>
 
         {/* Play Button */}
-        <Button
+        <button
           onClick={() => setShowGame(true)}
-          variant="contained"
-          sx={{
-            bgcolor: '#e67e22',
+          style={{
+            backgroundColor: '#e67e22',
             color: 'white',
-            fontSize: { xs: '1.5rem', sm: '2rem' },
-            padding: '0.5rem 2rem',
-            mb: 4,
-            fontFamily: "'Rye', serif",
-            '&:hover': {
-              bgcolor: '#d35400'
-            }
+            fontSize: '2rem',
+            padding: '0.5rem 5rem',
+            marginBottom: '2rem',
+            
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s'
           }}
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#d35400'}
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#e67e22'}
         >
           {t('play')}
-        </Button>
+        </button>
 
         {/* How to Play Button */}
-        <Button
+        <button
           onClick={() => setShowHowToPlay(true)}
-          variant="text"
-          sx={{
+          style={{
             color: '#2c3e50',
-            fontSize: { xs: '1.2rem', sm: '1.5rem' },
-            mb: 2,
-            fontFamily: "'Rye', serif"
+            border: '2px solid #2c3e50',
+            fontSize: '1.5rem',
+            marginBottom: '1rem',
+            background: 'none',
+            cursor: 'pointer',
+            padding: '0.5rem 1rem'
           }}
         >
           {t('howToPlay')}
-        </Button>
-      </Box>
+        </button>
+      </div>
 
       {/* Bottom Decorations */}
       <img
@@ -262,7 +256,7 @@ const HomePage: React.FC = () => {
 
       {/* Modals */}
       {showHowToPlay && <HowToPlay onClose={() => setShowHowToPlay(false)} />}
-    </Box>
+    </div>
   );
 };
 

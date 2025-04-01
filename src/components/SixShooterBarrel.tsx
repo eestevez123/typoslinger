@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box } from '@mui/material';
 import { motion } from 'framer-motion';
 
 // Import assets
@@ -23,8 +22,8 @@ const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults }) => 
   ];
 
   return (
-    <Box
-      sx={{
+    <div
+      style={{
         position: 'absolute',
         bottom: '1rem',
         left: '1rem',
@@ -44,8 +43,8 @@ const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults }) => 
       />
 
       {/* Shell container */}
-      <Box
-        sx={{
+      <div
+        style={{
           position: 'absolute',
           top: 0,
           left: 0,
@@ -94,8 +93,8 @@ const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults }) => 
             />
           );
         })}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 
