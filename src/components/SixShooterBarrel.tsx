@@ -84,11 +84,11 @@ const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults, isAud
 
   // Shell positions in pixels for mobile
   const mobilePositions = [
-    { left: 65, top: 10 },   // top-right
-    { left: 85, top: 42 },   // right
-    { left: 68, top: 75 },   // bottom-right
-    { left: 38, top: 77 },   // bottom
-    { left: 14, top: 48 },   // bottom-left
+    { left: 66, top: 13 },   // top-right
+    { left: 86, top: 40 },   // right
+    { left: 68, top: 73 },   // bottom-right
+    { left: 38, top: 73 },   // bottom
+    { left: 16, top: 47 },   // bottom-left
     { left: 33, top: 17 }    // top-left
   ];
 
@@ -108,7 +108,7 @@ const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults, isAud
           rotate: isSpinning ? [0, 1440] : 1440
         }}
         transition={{ 
-          duration: 0.8,
+          duration: 0.7,
           ease: "linear"
         }}
         style={{
@@ -127,7 +127,7 @@ const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults, isAud
           rotate: isSpinning ? [0, 1440] : 1440
         }}
         transition={{ 
-          duration: 0.8,
+          duration: 0.7,
           ease: "linear"
         }}
         style={{
