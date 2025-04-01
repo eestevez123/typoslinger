@@ -12,6 +12,8 @@ interface SixShooterBarrelProps {
 
 const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults }) => {
   const [isMobile, setIsMobile] = useState(false);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [canSpin, setCanSpin] = useState(true);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -27,6 +29,23 @@ const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults }) => 
     // Cleanup
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  const handleSpin = () => {
+    if (!canSpin) return;
+    
+    setIsSpinning(true);
+    setCanSpin(false);
+
+    // Reset spinning state after animation
+    setTimeout(() => {
+      setIsSpinning(false);
+    }, 1000);
+
+    // Reset cooldown after 5 seconds
+    setTimeout(() => {
+      setCanSpin(true);
+    }, 2000);
+  };
 
   // Shell positions in pixels for desktop
   const desktopPositions = [
@@ -52,27 +71,47 @@ const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults }) => 
   const shellSize = isMobile ? 25 : 35;
 
   return (
-    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+    <div 
+      style={{ width: '100%', height: '100%', position: 'relative' }}
+      onClick={handleSpin}
+    >
       {/* Base barrel image */}
-      <img
+      <motion.img
         src={sixShooterBarrel}
         alt="Six Shooter Barrel"
+        animate={{ 
+          rotate: isSpinning ? [0, 1440] : 1440
+        }}
+        transition={{ 
+          duration: 0.8,
+          ease: "linear"
+        }}
         style={{
           width: '100%',
           height: '100%',
-          position: 'absolute'
+          position: 'absolute',
+          cursor: canSpin ? 'pointer' : 'default',
+          transformOrigin: 'center center'
         }}
       />
 
       {/* Shell container */}
-      <div
+      <motion.div
+        animate={{ 
+          rotate: isSpinning ? [0, 1440] : 1440
+        }}
+        transition={{ 
+          duration: 0.8,
+          ease: "linear"
+        }}
         style={{
           position: 'absolute',
           top: 0,
           left: 0,
           width: '100%',
           height: '100%',
-          pointerEvents: 'none'
+          pointerEvents: 'none',
+          transformOrigin: 'center center'
         }}
       >
         {/* Shell indicators */}
@@ -115,7 +154,7 @@ const SixShooterBarrel: React.FC<SixShooterBarrelProps> = ({ roundResults }) => 
             />
           );
         })}
-      </div>
+      </motion.div>
     </div>
   );
 };
